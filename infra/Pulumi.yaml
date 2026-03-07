@@ -1,0 +1,11 @@
+name: fastapi-react-starter
+description: full stack static application consist React as Frontend, FastAPI as Backend and Postgres as Database
+runtime:
+  name: python
+  options:
+    toolchain: pip
+    virtualenv: venv
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: azure-python
