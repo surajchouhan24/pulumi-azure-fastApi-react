@@ -1,3 +1,10 @@
-encryptionsalt: v1:G4OkIWSBKDM=:v1:Na59FIOj6MTjDVk1:AfQ1Z5J4ti+pGc0JFEPk0hGNdODskA==
 config:
   azure-native:location: centralindia
+  fastapi-react-starter:environment: dev-test
+  fastapi-react-starter:location: eastasia
+  fastapi-react-starter:dbName: appdb
+  fastapi-react-starter:dbUser: postgres
+  fastapi-react-starter:dbPassword:
+    secure: AAABAL/R30KT/1fzTwrCdcIVaICsn9cfN49+BG6tO7KZIHdCAFz+5w==
+  fastapi-react-starter:jwtKey:
+    secure: AAABAO7Eypje6YzwaqvFcNmTXJQjg34mgd2mTCPOnnAkB7gWmgxUDAWqadbdqIWEIZj5

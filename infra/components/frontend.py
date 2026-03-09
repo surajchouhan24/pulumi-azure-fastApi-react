@@ -41,28 +41,49 @@
 #     )
 #     return site
 
-from pulumi_azure_native import web
+# from pulumi_azure_native import web
 
-def create_frontend(resource_group_name, location):
+# def create_frontend(resource_group_name, location):
 
-    site = web.StaticSite(
-        "react-frontend",
-        resource_group_name=resource_group_name,
-        location=location,
+#     site = web.StaticSite(
+#         "react-frontend",
+#         resource_group_name=resource_group_name,
+#         location=location,
 
-        sku=web.SkuDescriptionArgs(
-            name="Free",
-            tier="Free"
-        ),
+#         sku=web.SkuDescriptionArgs(
+#             name="Free",
+#             tier="Free"
+#         ),
 
-        repository_url="https://github.com/surajchouhan24/react-fastApi-postgres.git",
-        branch="main",
+#         repository_url="https://github.com/surajchouhan24/react-fastApi-postgres.git",
+#         branch="main",
 
-        build_properties=web.StaticSiteBuildPropertiesArgs(
-            app_location="/frontend",
-            api_location="",
-            output_location="build"
+#         build_properties=web.StaticSiteBuildPropertiesArgs(
+#             app_location="/frontend",
+#             api_location="",
+#             output_location="build"
+#         )
+#     )
+
+#     return site
+
+import pulumi_azure_native as azure
+
+class Frontend:
+
+    def __init__(self, name, rg, location, api_url):
+
+        swa = azure.web.StaticSite(
+            name,
+            resource_group_name=rg,
+            location=location,
+            sku=azure.web.SkuDescriptionArgs(
+                name="Free",
+                tier="Free"
+            ),
+            repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
+            branch="main",
+            
         )
-    )
 
-    return site
+        self.url = swa.default_hostname

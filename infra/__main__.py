@@ -68,41 +68,102 @@
 
 # pulumi.export("resourceGroupName", resource_group.name)
 # # pulumi.export("frontend_url", frontend.default_host_name)
+# import pulumi
+# from pulumi_azure_native import resources
+
+# from components.network import create_network
+# from components.postgres import create_postgres
+# from components.api import create_api
+# from components.frontend import create_frontend
+# from components.keyvault import create_keyvault
+
+# env = pulumi.get_stack()
+# location = "eastasia"
+
+# # Resource Group
+# resource_group = resources.ResourceGroup(
+#     f"fastapi-react-{env}-rg",
+#     location=location
+# )
+
+# # Network
+# vnet, subnet = create_network(resource_group.name, location)
+
+# # Key Vault
+# keyvault = create_keyvault(resource_group.name, location)
+
+# # PostgreSQL
+# postgres = create_postgres(resource_group.name, location)
+
+# # Backend API
+# api = create_api(resource_group.name, location)
+
+# # Frontend
+# frontend = create_frontend(resource_group.name, location)
+
+# # Outputs
+# pulumi.export("resourceGroupName", resource_group.name)
+# pulumi.export("frontendUrl", frontend.default_hostname)
+# pulumi.export("apiUrl", api.default_host_name)
+# pulumi.export("postgresHost", postgres.fully_qualified_domain_name)
+
+
 import pulumi
-from pulumi_azure_native import resources
+import pulumi_azure_native as azure
 
-from components.network import create_network
-from components.postgres import create_postgres
-from components.api import create_api
-from components.frontend import create_frontend
-from components.keyvault import create_keyvault
+from components.network import Network
+from components.keyvault import KeyVault
+from components.postgres import Postgres
+from components.api import ApiService
+from components.frontend import Frontend
 
-env = pulumi.get_stack()
-location = "eastasia"
+config = pulumi.Config()
 
-# Resource Group
-resource_group = resources.ResourceGroup(
-    f"fastapi-react-{env}-rg",
+env = config.require("environment")
+location = config.get("location") or "centralindia"
+
+resource_group = azure.resources.ResourceGroup(
+    f"myapp-{env}-rg",
     location=location
 )
 
-# Network
-vnet, subnet = create_network(resource_group.name, location)
+network = Network(
+    f"myapp-{env}-network",
+    resource_group.name,
+    location
+)
 
-# Key Vault
-keyvault = create_keyvault(resource_group.name, location)
+keyvault = KeyVault(
+    f"myapp-{env}-kv",
+    resource_group.name,
+    location
+)
 
-# PostgreSQL
-postgres = create_postgres(resource_group.name, location)
+postgres = Postgres(
+    f"myapp-{env}-db",
+    resource_group.name,
+    location,
+    network.subnet_id,
+    keyvault.vault_uri
+)
 
-# Backend API
-api = create_api(resource_group.name, location)
+api = ApiService(
+    f"myapp-{env}-api",
+    resource_group.name,
+    location,
+    postgres.db_url,
+    keyvault.vault_uri
+)
 
-# Frontend
-frontend = create_frontend(resource_group.name, location)
+frontend = Frontend(
+    f"myapp-{env}-frontend",
+    resource_group.name,
+    location,
+    api.api_url
+)
 
-# Outputs
+pulumi.export("frontendUrl", frontend.url)
+pulumi.export("apiUrl", api.api_url)
+pulumi.export("postgresHost", postgres.host)
 pulumi.export("resourceGroupName", resource_group.name)
-pulumi.export("frontendUrl", frontend.default_hostname)
-pulumi.export("apiUrl", api.default_host_name)
-pulumi.export("postgresHost", postgres.fully_qualified_domain_name)
+pulumi.export("keyVaultUri", keyvault.vault_uri)
