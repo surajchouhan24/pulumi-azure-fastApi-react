@@ -9,35 +9,46 @@ on:
 jobs:
   backend-format:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: fastapi-react-starter/backend
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
+          python-version: "3.11"
+
       - name: Install dependencies
         run: |
-          cd pulumi-azure-fastApi-react/backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install black
+
       - name: Check formatting with black
-        run: |
-          cd pulumi-azure-fastApi-react/backend
-          black --check pulumi-azure-fastApi-react/app/
+        run: black --check app/
+
 
   frontend-format:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: fastapi-react-starter/frontend
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+
       - name: Install dependencies
-        run: |
-          cd pulumi-azure-fastApi-react/frontend
-          npm install
+        run: npm install
+
       - name: Check formatting with prettier
-        run: |
-          cd pulumi-azure-fastApi-react/frontend
-          npm run format:check
+        run: npm run format:check
