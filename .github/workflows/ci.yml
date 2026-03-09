@@ -9,46 +9,35 @@ on:
 jobs:
   backend-format:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: fastapi-react-starter/backend
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
+          python-version: '3.11'
       - name: Install dependencies
         run: |
+          cd fastapi-react-starter/backend
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install black
-
       - name: Check formatting with black
-        run: black --check app/
-
+        run: |
+          cd fastapi-react-starter/backend
+          black --check fastapi-react-starter/app/
 
   frontend-format:
     runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: fastapi-react-starter/frontend
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-
+          node-version: '20'
       - name: Install dependencies
-        run: npm install
-
+        run: |
+          cd fastapi-react-starter/frontend
+          npm install
       - name: Check formatting with prettier
-        run: npm run format:check
+        run: |
+          cd fastapi-react-starter/frontend
+          npm run format:check
