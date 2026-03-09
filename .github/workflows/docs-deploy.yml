@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'fastapi-react-starter/docs/**'
-      - 'fastapi-react-starter/mkdocs.yml'
+      - 'pulumi-azure-fastApi-react/docs/**'
+      - 'pulumi-azure-fastApi-react/mkdocs.yml'
   workflow_dispatch:
 
 permissions:
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r fastapi-react-starter/docs/requirements.txt
+          pip install -r pulumi-azure-fastApi-react/docs/requirements.txt
 
       - name: Deploy to GitHub Pages
-        run: fastapi-react-starter/mkdocs gh-deploy --force
+        run: pulumi-azure-fastApi-react/mkdocs gh-deploy --force
