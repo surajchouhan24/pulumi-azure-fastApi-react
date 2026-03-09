@@ -83,7 +83,14 @@ class Frontend:
             ),
             repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
             branch="main",
-            
+            build_properties=azure.web.StaticSiteBuildPropertiesArgs(
+                app_location="frontend",
+                api_location=None,
+                output_location="build",
+                app_settings={
+                    "VITE_API_URL": api_url
+                }
+            )
         )
 
         self.url = swa.default_hostname
