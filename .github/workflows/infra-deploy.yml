@@ -6,9 +6,12 @@ on:
       - main
     paths:
       - 'infra/**'
+      - '.github/workflows/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
+    name: Pulumi Infrastructure Deploy
     runs-on: ubuntu-latest
 
     defaults:
@@ -37,7 +40,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - name: Select stack
+      - name: Select or create stack
         run: pulumi stack select dev-test || pulumi stack init dev-test
 
       - name: Deploy infrastructure
