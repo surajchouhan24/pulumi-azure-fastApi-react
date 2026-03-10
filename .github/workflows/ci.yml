@@ -23,7 +23,7 @@ jobs:
       - name: Check formatting with black
         run: |
           cd fastapi-react-starter/backend
-          black --check fastapi-react-starter/app/
+          black --check app/
 
   frontend-format:
     runs-on: ubuntu-latest
