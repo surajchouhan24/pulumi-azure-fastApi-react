@@ -3,6 +3,7 @@ from pathlib import Path
 from functools import lru_cache
 from typing import Optional, List
 from pydantic_settings import BaseSettings
+from pydantic import field_validator
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,6 +21,14 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "https://lively-bush-0f7995a00.1.azurestaticapps.net",
     ]
+    
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v):
+        if isinstance(v, str):
+            return [i.strip() for i in v.split(",")]
+        return v
+    
     API_PREFIX: str = "/api"
 
     # Database settings
