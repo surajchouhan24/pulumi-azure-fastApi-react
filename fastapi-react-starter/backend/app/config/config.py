@@ -15,7 +15,11 @@ class Settings(BaseSettings):
     ENVIRONMENT: str = "development"
     DATABASE_URL: str = ""
     TEST_DATABASE_URL: Optional[str] = "sqlite+aiosqlite:///./test_app.db"
-    CORS_ORIGINS: List[str] = ["http://localhost:5173", "http://localhost:3000", "http://ashy-hill-0602a4300.2.azurestaticapps.net"]
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://ashy-hill-0602a4300.2.azurestaticapps.net",
+    ]
     API_PREFIX: str = "/api"
 
     # Database settings
