@@ -1,1 +1,10 @@
-encryptionsalt: v1:oSCWal+WT5o=:v1:r8ov27vyCqkOpVSJ:e9djrEj+qUQ+6QNtWI4eE9ZikI6Zpg==
+config:
+  azure-native:location: centralindia
+  fastapi-react-starter:environment: production
+  fastapi-react-starter:location: eastasia
+  fastapi-react-starter:dbName: appdb
+  fastapi-react-starter:dbUser: postgres
+  fastapi-react-starter:dbPassword:
+    secure: AAABAJXmUqi3NBWTVKW4k9BVlR49zp73uF+0+9TS65z+1E0Z5Yeymw==
+  fastapi-react-starter:jwtKey:
+    secure: AAABAI8ETprb3ZyR0x4C9UJn+qNFvqncVulejKGDMlGCUHpopjU=
