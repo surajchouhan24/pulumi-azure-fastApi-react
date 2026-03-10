@@ -1,5 +1,6 @@
 // Cache the promise to avoid creating a new one on every render
-let healthPromise = null
+// let healthPromise = null
+let healthPromise: Promise<any> | null = null;
 
 export function useHealthStatus() {
   if (!healthPromise) {
@@ -14,7 +15,7 @@ async function fetchHealthStatus() {
     if (!response.ok) return { status: 'error' }
     const data = await response.json()
     return data
-  } catch (error) {
+  } catch (error: any) {
     return { status: 'error', message: error.message }
   }
 }
