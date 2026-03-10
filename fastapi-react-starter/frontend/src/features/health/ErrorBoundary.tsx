@@ -15,18 +15,14 @@
 //     </div>
 //   )
 // }
-import { ReactNode, useState } from "react";
+import { ReactNode, useState } from 'react'
 
 export function ErrorBoundary({ children }: { children: ReactNode }) {
-  const [error] = useState<Error | null>(null);
+  const [error] = useState<Error | null>(null)
 
   if (error) {
-    return (
-      <span className="text-red-600">
-        Error: {error.message || "Something went wrong"}
-      </span>
-    );
+    return <span className="text-red-600">Error: {error.message || 'Something went wrong'}</span>
   }
 
-  return <>{children}</>;
+  return <>{children}</>
 }
