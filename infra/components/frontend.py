@@ -67,23 +67,58 @@
 
 #     return site
 
+# import pulumi_azure_native as azure
+
+# class Frontend:
+
+#     def __init__(self, name, rg, location, api_url):
+
+#         swa = azure.web.StaticSite(
+#             name,
+#             resource_group_name=rg,
+#             location=location,
+#             sku=azure.web.SkuDescriptionArgs(
+#                 name="Free",
+#                 tier="Free"
+#             ),
+#             repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
+#             branch="main",
+            
+#         )
+
+#         self.url = swa.default_hostname
+
+import pulumi
 import pulumi_azure_native as azure
+
 
 class Frontend:
 
-    def __init__(self, name, rg, location, api_url):
+    def __init__(self, name, rg, location):
 
         swa = azure.web.StaticSite(
-            name,
+            f"{name}-frontend",
             resource_group_name=rg,
             location=location,
+
             sku=azure.web.SkuDescriptionArgs(
                 name="Free",
                 tier="Free"
             ),
+
             repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
+
             branch="main",
-            
+
+            build_properties=azure.web.StaticSiteBuildPropertiesArgs(
+                app_location="fastapi-react-starter/frontend",
+                api_location="",
+                app_artifact_location="dist",
+                app_build_command="npm run build"
+            )
         )
 
-        self.url = swa.default_hostname
+        self.url = pulumi.Output.concat(
+            "https://",
+            swa.default_hostname
+        )
