@@ -74,7 +74,7 @@ jobs:
       - name: Build React app
         run: |
           cd fastapi-react-starter/frontend
-          echo "VITE_API_URL=https://myapp-dev-test-apia04a0620.azurewebsites.net" > .env.production
+          echo "VITE_API_URL=https://myapp-dev-test-api-apif337205f.azurewebsites.net" > .env.production
           npm run build
 
 

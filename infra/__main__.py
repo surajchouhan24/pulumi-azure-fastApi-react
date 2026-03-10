@@ -107,25 +107,25 @@
 # pulumi.export("apiUrl", api.default_host_name)
 # pulumi.export("postgresHost", postgres.fully_qualified_domain_name)
 
-
 import pulumi
 import pulumi_azure_native as azure
 
 from components.network import Network
-from components.keyvault import KeyVault
 from components.postgres import Postgres
 from components.api import ApiService
 from components.frontend import Frontend
 
-config = pulumi.Config()
 
+config = pulumi.Config()
 env = config.require("environment")
 location = config.get("location") or "centralindia"
+
 
 resource_group = azure.resources.ResourceGroup(
     f"myapp-{env}-rg",
     location=location
 )
+
 
 network = Network(
     f"myapp-{env}-network",
@@ -133,37 +133,31 @@ network = Network(
     location
 )
 
-keyvault = KeyVault(
-    f"myapp-{env}-kv",
-    resource_group.name,
-    location
-)
 
 postgres = Postgres(
     f"myapp-{env}-db",
     resource_group.name,
     location,
-    network.subnet_id,
-    keyvault.vault_uri
+    network.subnet_id
 )
+
 
 api = ApiService(
     f"myapp-{env}-api",
     resource_group.name,
     location,
-    postgres.db_url,
-    keyvault.vault_uri
+    postgres.host
 )
+
 
 frontend = Frontend(
     f"myapp-{env}-frontend",
     resource_group.name,
-    location,
-    api.api_url
+    location
 )
+
 
 pulumi.export("frontendUrl", frontend.url)
 pulumi.export("apiUrl", api.api_url)
 pulumi.export("postgresHost", postgres.host)
 pulumi.export("resourceGroupName", resource_group.name)
-pulumi.export("keyVaultUri", keyvault.vault_uri)

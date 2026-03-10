@@ -122,14 +122,13 @@
 #             "https://",
 #             swa.default_hostname
 #         )
-
 import pulumi
 import pulumi_azure_native as azure
 
 
 class Frontend:
 
-    def __init__(self, name, rg, location, api_url):
+    def __init__(self, name, rg, location):
 
         swa = azure.web.StaticSite(
             f"{name}-frontend",
@@ -138,7 +137,7 @@ class Frontend:
 
             sku=azure.web.SkuDescriptionArgs(
                 name="Free",
-                tier="Free"
+                tier="Free",
             ),
 
             repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
@@ -149,12 +148,7 @@ class Frontend:
                 api_location="",
                 app_artifact_location="dist",
                 app_build_command="npm run build",
-
-                # # inject env variable into frontend build
-                # environment_variables={
-                #     "VITE_API_URL": api_url
-                # }
-            )
+            ),
         )
 
         self.url = pulumi.Output.concat(

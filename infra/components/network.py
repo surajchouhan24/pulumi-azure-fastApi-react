@@ -40,9 +40,8 @@
 #     )
 
 #     return vnet, subnet
-
 import pulumi_azure_native as azure
-import pulumi
+
 
 class Network:
 

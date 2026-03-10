@@ -99,16 +99,14 @@
 #             "https://",
 #             app.default_host_name
 #         )
-
 import pulumi
 import pulumi_azure_native as azure
 
 
 class ApiService:
 
-    def __init__(self, name, rg, location, postgres_host, keyvault_uri):
+    def __init__(self, name, rg, location, postgres_host):
 
-        # App Service Plan
         plan = azure.web.AppServicePlan(
             f"{name}-plan",
             resource_group_name=rg,
@@ -117,11 +115,10 @@ class ApiService:
             reserved=True,
             sku=azure.web.SkuDescriptionArgs(
                 name="B1",
-                tier="Basic"
-            )
+                tier="Basic",
+            ),
         )
 
-        # Web App running Docker container
         app = azure.web.WebApp(
             f"{name}-api",
             resource_group_name=rg,
@@ -130,56 +127,19 @@ class ApiService:
 
             site_config=azure.web.SiteConfigArgs(
                 linux_fx_version="DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
-
                 always_on=True,
 
                 app_settings=[
-                    azure.web.NameValuePairArgs(
-                        name="DB_HOST",
-                        value=postgres_host
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_USER",
-                        value="postgres"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_PASSWORD",
-                        value="StrongPassword123!"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_NAME",
-                        value="appdb"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_PORT",
-                        value="5432"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="JWT_SIGNING_KEY",
-                        value="dummy"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="KEYVAULT_URI",
-                        value=keyvault_uri
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="WEBSITES_PORT",
-                        value="8000"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="ENVIRONMENT",
-                        value="production"
-                    ),
-                ]
-            )
+                    azure.web.NameValuePairArgs(name="DB_HOST", value=postgres_host),
+                    azure.web.NameValuePairArgs(name="DB_USER", value="postgres"),
+                    azure.web.NameValuePairArgs(name="DB_PASSWORD", value="StrongPassword123!"),
+                    azure.web.NameValuePairArgs(name="DB_NAME", value="postgres"),
+                    azure.web.NameValuePairArgs(name="DB_PORT", value="5432"),
+                    azure.web.NameValuePairArgs(name="WEBSITES_PORT", value="8000"),
+                    azure.web.NameValuePairArgs(name="ENVIRONMENT", value="production"),
+                    azure.web.NameValuePairArgs(name="JWT_SIGNING_KEY", value="dummy"),
+                ],
+            ),
         )
 
         self.api_url = pulumi.Output.concat(
