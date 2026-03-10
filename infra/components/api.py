@@ -141,7 +141,7 @@ class ApiService:
 
                     azure.web.NameValuePairArgs(
                         name="DB_USER",
-                        value="pgadmin"
+                        value="postgres"
                     ),
 
                     azure.web.NameValuePairArgs(
