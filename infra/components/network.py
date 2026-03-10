@@ -40,9 +40,9 @@
 #     )
 
 #     return vnet, subnet
+
 import pulumi_azure_native as azure
 import pulumi
-
 
 class Network:
 
@@ -62,9 +62,6 @@ class Network:
             resource_group_name=rg,
             virtual_network_name=vnet.name,
             address_prefix="10.0.1.0/24",
-
-            # 🔴 IMPORTANT FIX
-            opts=pulumi.ResourceOptions(depends_on=[vnet])
         )
 
         self.subnet_id = subnet.id

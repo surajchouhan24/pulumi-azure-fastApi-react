@@ -82,7 +82,7 @@ class Postgres:
         self.host = server.fully_qualified_domain_name
 
         self.db_url = pulumi.Output.concat(
-            "postgresql+asyncpg://postgres:",
+            "postgresql://postgres:",
             password,
             "@",
             server.fully_qualified_domain_name,

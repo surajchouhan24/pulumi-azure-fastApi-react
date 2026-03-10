@@ -54,6 +54,7 @@
 import pulumi
 import pulumi_azure_native as azure
 
+
 class ApiService:
 
     def __init__(self, name, rg, location, db_url, keyvault_uri):
@@ -71,37 +72,30 @@ class ApiService:
             )
         )
 
-        # App Settings (DB + JWT + ENV)
-        app_settings = [
-            azure.web.NameValuePairArgs(name="DATABASE_URL", value=db_url),
-            azure.web.NameValuePairArgs(name="ENVIRONMENT", value="production"),
-            azure.web.NameValuePairArgs(name="KEYVAULT_URI", value=keyvault_uri),
-            # Inject secrets from KeyVault
-            # For example, if you have JWT_SECRET
-            azure.web.NameValuePairArgs(name="JWT_KEY", value=pulumi.Config().get_secret("jwtKey") or pulumi.Output.secret("dev-jwt-secret"))
-        ]
-
-        # Web App
+        # Web App (FastAPI backend)
         app = azure.web.WebApp(
             name,
-            resource_group_name=rg,
+            resource_group_name=rg,   # ✅ fixed here
             location=location,
             server_farm_id=plan.id,
+
             site_config=azure.web.SiteConfigArgs(
-                linux_fx_version="PYTHON|3.12",  # Use latest supported Python
-                app_settings=app_settings,
-                always_on=True
-            ),
-            https_only=True
+                linux_fx_version="PYTHON|3.10",
+                app_settings=[
+                    azure.web.NameValuePairArgs(
+                        name="DATABASE_URL",
+                        value=db_url
+                    ),
+                    azure.web.NameValuePairArgs(
+                        name="KEYVAULT_URI",
+                        value=keyvault_uri
+                    )
+                ]
+            )
         )
 
-        # 🔹 Startup command: Gunicorn + Uvicorn
-        # Replace `app.main:app` with your FastAPI ASGI app path
-        app_identity = azure.web.WebAppApplicationSettings(
-            name=name,
-            resource_group_name=rg,
-            properties={"startupCommand": "gunicorn -w 4 -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000"}
+        # Output API URL
+        self.api_url = pulumi.Output.concat(
+            "https://",
+            app.default_host_name
         )
-
-        # API URL output
-        self.api_url = pulumi.Output.concat("https://", app.default_host_name)
