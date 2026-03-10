@@ -153,7 +153,8 @@ api = ApiService(
 frontend = Frontend(
     f"myapp-{env}-frontend",
     resource_group.name,
-    location
+    location,
+    api.api_url
 )
 
 

@@ -128,7 +128,7 @@ import pulumi_azure_native as azure
 
 class Frontend:
 
-    def __init__(self, name, rg, location):
+    def __init__(self, name, rg, location, api_url):
 
         swa = azure.web.StaticSite(
             f"{name}-frontend",
@@ -148,6 +148,10 @@ class Frontend:
                 api_location="",
                 app_artifact_location="dist",
                 app_build_command="npm run build",
+                
+                environment_variables={
+                    "VITE_API_URL": api_url
+                }
             ),
         )
 
