@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
-        "http://ashy-hill-0602a4300.2.azurestaticapps.net",
+        "https://red-ocean-039576900.1.azurestaticapps.net",
     ]
     API_PREFIX: str = "/api"
 
