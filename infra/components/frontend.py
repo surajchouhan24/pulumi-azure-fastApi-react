@@ -150,10 +150,10 @@ class Frontend:
                 app_artifact_location="dist",
                 app_build_command="npm run build",
 
-                # inject env variable into frontend build
-                environment_variables={
-                    "VITE_API_URL": api_url
-                }
+                # # inject env variable into frontend build
+                # environment_variables={
+                #     "VITE_API_URL": api_url
+                # }
             )
         )
 
