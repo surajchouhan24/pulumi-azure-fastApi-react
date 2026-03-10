@@ -126,7 +126,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Select stack
-        run: pulumi stack select production || pulumi stack init production
+        run: pulumi stack select dev-test || pulumi stack init dev-test
         working-directory: infra
 
       - name: Pulumi Preview
