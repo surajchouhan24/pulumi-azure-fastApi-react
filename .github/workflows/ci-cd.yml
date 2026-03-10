@@ -131,3 +131,4 @@ deploy:
     - name: Deploy infrastructure
       run: pulumi up --yes --non-interactive --parallel 1
       working-directory: infra
+  
