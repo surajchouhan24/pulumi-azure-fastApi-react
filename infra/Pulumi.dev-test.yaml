@@ -1,7 +1,7 @@
 config:
-  azure-native:location: centralindia
+  # azure-native:location: centralindia
   fastapi-react-starter:environment: dev-test
-  fastapi-react-starter:location: eastasia
+  fastapi-react-starter:location: eastasia  
   fastapi-react-starter:dbName: appdb
   fastapi-react-starter:dbUser: postgres
   fastapi-react-starter:dbPassword:
