@@ -234,7 +234,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Select stack
-        run: pulumi stack select dev-test
+        run: pulumi stack select surajchouhan24-org/dev-test
         working-directory: infra
 
       - name: Preview Infrastructure
@@ -268,7 +268,7 @@ jobs:
         run: pulumi login
 
       - name: Select stack
-        run: pulumi stack select dev-test
+        run: pulumi stack select surajchouhan24-org/dev-test
         working-directory: infra
 
       - name: Get API URL from Pulumi
@@ -317,7 +317,7 @@ jobs:
         run: pulumi login
 
       - name: Select stack
-        run: pulumi stack select dev-test
+        run: pulumi stack select surajchouhan24-org/dev-test
         working-directory: infra
 
       - name: Download React build
