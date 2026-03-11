@@ -148,14 +148,7 @@ class Frontend:
                 api_location="",
                 app_artifact_location="dist",
                 app_build_command="npm run build",
-                
-                # environment_variables={
-                #     "VITE_API_URL": api_url
-                # }
             ),
-            # app_settings={
-            #     "VITE_API_URL": api_url
-            # }
         )
 
         self.url = pulumi.Output.concat(
