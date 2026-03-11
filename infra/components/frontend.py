@@ -155,3 +155,11 @@ class Frontend:
             "https://",
             swa.default_hostname
         )
+        
+            # get deployment token
+        secrets = azure.web.list_static_site_secrets_output(
+            resource_group_name=rg,
+            name=swa.name
+        )
+
+        self.token = secrets.apply(lambda s: s.properties.api_key)

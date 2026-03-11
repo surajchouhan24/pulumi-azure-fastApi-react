@@ -159,6 +159,7 @@ frontend = Frontend(
 
 
 pulumi.export("frontendUrl", frontend.url)
+pulumi.export("staticWebAppToken", frontend.token)
 pulumi.export("apiUrl", api.api_url)
 pulumi.export("postgresHost", postgres.host)
 pulumi.export("resourceGroupName", resource_group.name)
