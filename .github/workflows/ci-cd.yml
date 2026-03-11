@@ -1,3 +1,143 @@
+# name: CI-CD
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+
+#   ci:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Setup Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
+
+#       - name: Install backend dependencies
+#         run: |
+#           cd fastapi-react-starter/backend
+#           pip install -r requirements.txt
+
+#       - name: Run tests
+#         run: |
+#           cd fastapi-react-starter/backend
+#           pytest
+
+
+#   build:
+#     needs: ci
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Login to DockerHub
+#         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
+
+#       - name: Build backend image
+#         run: |
+#           docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:latest fastapi-react-starter/backend
+
+#       - name: Build frontend image
+#         run: |
+#           docker build -t ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest fastapi-react-starter/frontend
+
+#       - name: Push images
+#         run: |
+#           docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:latest
+#           docker push ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+
+
+#   frontend-build:
+#     needs: ci
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: "20"
+
+#       - name: Install frontend dependencies
+#         run: |
+#           cd fastapi-react-starter/frontend
+#           npm install
+
+#       - name: Build React app
+#         run: |
+#           cd fastapi-react-starter/frontend
+#           echo "VITE_API_URL=https://myapp-dev-test-api-apif337205f.azurewebsites.net" > .env.production
+#           npm run build
+
+
+#   frontend-deploy:
+#     needs: frontend-build
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Deploy to Azure Static Web Apps
+#         uses: Azure/static-web-apps-deploy@v1
+#         with:
+#           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
+#           repo_token: ${{ secrets.GITHUB_TOKEN }}
+#           action: "upload"
+#           app_location: "fastapi-react-starter/frontend"
+#           output_location: "dist"
+
+
+#   deploy:
+#     needs: [build, frontend-build]
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - uses: actions/checkout@v4
+
+#       - name: Setup Python
+#         uses: actions/setup-python@v5
+#         with:
+#           python-version: "3.12"
+
+#       - name: Install Pulumi CLI
+#         uses: pulumi/actions@v5
+
+#       - name: Install Infra dependencies
+#         run: |
+#           cd infra
+#           pip install -r requirements.txt
+
+#       - name: Pulumi Login
+#         run: pulumi login
+#         env:
+#           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+#       - name: Azure Login
+#         uses: azure/login@v2
+#         with:
+#           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+#       - name: Select stack
+#         run: pulumi stack select dev-test || pulumi stack init dev-test
+#         working-directory: infra
+
+#       - name: Pulumi Preview
+#         run: pulumi preview
+#         working-directory: infra
+
+#       - name: Deploy infrastructure
+#         run: pulumi up --yes --non-interactive --parallel 1
+#         working-directory: infra
+
+
 name: CI-CD
 
 on:
@@ -5,14 +145,19 @@ on:
     branches:
       - main
 
+env:
+  PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
 jobs:
 
+# =========================================================
+# 1️⃣ CI - Run backend tests
+# =========================================================
   ci:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -30,6 +175,9 @@ jobs:
           pytest
 
 
+# =========================================================
+# 2️⃣ Build & Push Docker Images
+# =========================================================
   build:
     needs: ci
     runs-on: ubuntu-latest
@@ -37,66 +185,28 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Login to DockerHub
+      - name: Login DockerHub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
 
       - name: Build backend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:latest fastapi-react-starter/backend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:${{ github.sha }} fastapi-react-starter/backend
 
       - name: Build frontend image
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest fastapi-react-starter/frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-frontend:${{ github.sha }} fastapi-react-starter/frontend
 
       - name: Push images
         run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:latest
-          docker push ${{ secrets.DOCKER_USERNAME }}/react-frontend:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-backend:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/react-frontend:${{ github.sha }}
 
 
-  frontend-build:
-    needs: ci
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install frontend dependencies
-        run: |
-          cd fastapi-react-starter/frontend
-          npm install
-
-      - name: Build React app
-        run: |
-          cd fastapi-react-starter/frontend
-          echo "VITE_API_URL=https://myapp-dev-test-api-apif337205f.azurewebsites.net" > .env.production
-          npm run build
-
-
-  frontend-deploy:
-    needs: frontend-build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to Azure Static Web Apps
-        uses: Azure/static-web-apps-deploy@v1
-        with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN }}
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          action: "upload"
-          app_location: "fastapi-react-starter/frontend"
-          output_location: "dist"
-
-
-  deploy:
-    needs: [build, frontend-build]
+# =========================================================
+# 3️⃣ Deploy Infrastructure via Pulumi
+# =========================================================
+  deploy-infra:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -117,8 +227,6 @@ jobs:
 
       - name: Pulumi Login
         run: pulumi login
-        env:
-          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
       - name: Azure Login
         uses: azure/login@v2
@@ -126,13 +234,109 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Select stack
-        run: pulumi stack select dev-test || pulumi stack init dev-test
+        run: pulumi stack select dev-test
         working-directory: infra
 
-      - name: Pulumi Preview
+      - name: Preview Infrastructure
         run: pulumi preview
         working-directory: infra
 
-      - name: Deploy infrastructure
-        run: pulumi up --yes --non-interactive --parallel 1
+      - name: Deploy Infrastructure
+        run: pulumi up --yes --non-interactive
         working-directory: infra
+
+
+# =========================================================
+# 4️⃣ Build React with Dynamic API URL
+# =========================================================
+  frontend-build:
+    needs: deploy-infra
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Pulumi CLI
+        uses: pulumi/actions@v5
+
+      - name: Pulumi Login
+        run: pulumi login
+
+      - name: Select stack
+        run: pulumi stack select dev-test
+        working-directory: infra
+
+      - name: Get API URL from Pulumi
+        id: api
+        run: |
+          API_URL=$(cd infra && pulumi stack output apiUrl)
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+
+      - name: Install frontend dependencies
+        run: |
+          cd fastapi-react-starter/frontend
+          npm install
+
+      - name: Create env file
+        run: |
+          cd fastapi-react-starter/frontend
+          echo "VITE_API_URL=${{ steps.api.outputs.api_url }}" > .env.production
+          cat .env.production
+
+      - name: Build React
+        run: |
+          cd fastapi-react-starter/frontend
+          npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: fastapi-react-starter/frontend/dist
+
+
+# =========================================================
+# 5️⃣ Deploy React to Azure Static Web Apps
+# =========================================================
+  frontend-deploy:
+    needs: frontend-build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pulumi CLI
+        uses: pulumi/actions@v5
+
+      - name: Pulumi Login
+        run: pulumi login
+
+      - name: Select stack
+        run: pulumi stack select dev-test
+        working-directory: infra
+
+      - name: Download React build
+        uses: actions/download-artifact@v4
+        with:
+          name: react-build
+          path: fastapi-react-starter/frontend/dist
+
+      - name: Get Static Web App token
+        id: swa
+        run: |
+          TOKEN=$(cd infra && pulumi stack output staticWebAppToken)
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+
+      - name: Deploy to Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "fastapi-react-starter/frontend/dist"
+          skip_app_build: true
