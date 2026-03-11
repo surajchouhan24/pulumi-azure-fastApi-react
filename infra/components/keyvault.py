@@ -41,7 +41,7 @@ class KeyVault:
 
         # Azure tenant
         client_config = azure.authorization.get_client_config()
-
+        #s
         # Azure KeyVault name rules:
         # 3–24 chars, alphanumeric + hyphen, globally unique
         vault_name = f"{name}-{stack}".replace("-", "")[:24].lower()
