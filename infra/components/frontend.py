@@ -162,4 +162,6 @@ class Frontend:
             name=swa.name
         )
 
-        self.token = secrets.apply(lambda s: s["properties"]["apiKey"])
+        self.token = secrets.apply(
+            lambda s: s.properties["apiKey"]
+        )
