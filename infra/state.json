@@ -1,0 +1,1088 @@
+{
+    "version": 3,
+    "deployment": {
+        "manifest": {
+            "time": "2026-03-11T12:37:45.642825254+05:30",
+            "magic": "dc383bdf9ea4c699d9c5133da3d55c6806482041e2bc63c49ba6ea42b49dc40a",
+            "version": "v3.223.0"
+        },
+        "secrets_providers": {
+            "type": "service",
+            "state": {
+                "url": "https://api.pulumi.com",
+                "owner": "surajchouhan24-org",
+                "project": "fastapi-react-starter",
+                "stack": "dev-test"
+            }
+        },
+        "metadata": {},
+        "resources": [
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "custom": false,
+                "type": "pulumi:pulumi:Stack",
+                "outputs": {
+                    "apiUrl": "https://myapp-dev-test-api-apif337205f.azurewebsites.net",
+                    "frontendUrl": "https://lively-bush-0f7995a00.1.azurestaticapps.net",
+                    "postgresHost": "myapp-dev-test-dbead18aea.postgres.database.azure.com",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc"
+                },
+                "created": "2026-03-07T12:47:34.822290778Z",
+                "modified": "2026-03-07T12:47:34.822290778Z",
+                "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0",
+                "custom": true,
+                "id": "c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "type": "pulumi:providers:azure-native",
+                "inputs": {
+                    "__internal": {},
+                    "location": "centralindia",
+                    "version": "3.15.0"
+                },
+                "outputs": {
+                    "location": "centralindia",
+                    "version": "3.15.0"
+                },
+                "created": "2026-03-07T12:47:35.116851067Z",
+                "modified": "2026-03-07T12:47:35.116851067Z"
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc",
+                "type": "azure-native:resources:ResourceGroup",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "azureApiVersion": "2024-03-01",
+                    "location": "eastasia",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc"
+                },
+                "outputs": {
+                    "azureApiVersion": "2024-03-01",
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc",
+                    "location": "eastasia",
+                    "name": "myapp-dev-test-rg3709adfc",
+                    "properties": {
+                        "provisioningState": "Succeeded"
+                    },
+                    "type": "Microsoft.Resources/resourceGroups"
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "location": []
+                },
+                "created": "2026-03-07T12:47:42.131922744Z",
+                "modified": "2026-03-07T12:47:42.131922744Z",
+                "sourcePosition": "project:///__main__.py#124",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///__main__.py#124"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:web:StaticSite::myapp-dev-test-frontend-frontend",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/staticSites/myapp-dev-test-frontend-frontendb08fb89b",
+                "type": "azure-native:web:StaticSite",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "azureApiVersion": "2024-04-01",
+                    "branch": "main",
+                    "buildProperties": {
+                        "apiLocation": "",
+                        "appArtifactLocation": "dist",
+                        "appBuildCommand": "npm run build",
+                        "appLocation": "fastapi-react-starter/frontend"
+                    },
+                    "location": "eastasia",
+                    "name": "myapp-dev-test-frontend-frontendb08fb89b",
+                    "repositoryUrl": "https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "sku": {
+                        "name": "Free",
+                        "tier": "Free"
+                    }
+                },
+                "outputs": {
+                    "allowConfigFileUpdates": true,
+                    "azureApiVersion": "2024-04-01",
+                    "branch": "main",
+                    "contentDistributionEndpoint": "https://content-hk1.infrastructure.1.azurestaticapps.net",
+                    "customDomains": [],
+                    "databaseConnections": [],
+                    "defaultHostname": "lively-bush-0f7995a00.1.azurestaticapps.net",
+                    "enterpriseGradeCdnStatus": "Disabled",
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/staticSites/myapp-dev-test-frontend-frontendb08fb89b",
+                    "keyVaultReferenceIdentity": "SystemAssigned",
+                    "linkedBackends": [],
+                    "location": "East Asia",
+                    "name": "myapp-dev-test-frontend-frontendb08fb89b",
+                    "privateEndpointConnections": [],
+                    "provider": "GitHub",
+                    "repositoryUrl": "https://github.com/surajchouhan24/pulumi-azure-fastApi-react",
+                    "sku": {
+                        "name": "Free",
+                        "tier": "Free"
+                    },
+                    "stagingEnvironmentPolicy": "Enabled",
+                    "type": "Microsoft.Web/staticSites"
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "branch": [],
+                    "buildProperties": [],
+                    "location": [],
+                    "repositoryUrl": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "sku": []
+                },
+                "created": "2026-03-10T09:41:34.401772773Z",
+                "modified": "2026-03-10T09:41:34.401772773Z",
+                "sourcePosition": "project:///components/frontend.py#133",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/frontend.py#133"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#153"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:web:AppServicePlan::myapp-dev-test-api-plan",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/serverfarms/myapp-dev-test-api-plan394170d8",
+                "type": "azure-native:web:AppServicePlan",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "azureApiVersion": "2024-04-01",
+                    "hyperV": false,
+                    "isXenon": false,
+                    "kind": "linux",
+                    "location": "eastasia",
+                    "name": "myapp-dev-test-api-plan394170d8",
+                    "perSiteScaling": false,
+                    "reserved": true,
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "sku": {
+                        "name": "B1",
+                        "tier": "Basic"
+                    },
+                    "zoneRedundant": false
+                },
+                "outputs": {
+                    "azureApiVersion": "2024-04-01",
+                    "elasticScaleEnabled": false,
+                    "geoRegion": "East Asia",
+                    "hyperV": false,
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/serverfarms/myapp-dev-test-api-plan394170d8",
+                    "isSpot": false,
+                    "isXenon": false,
+                    "kind": "linux",
+                    "location": "East Asia",
+                    "maximumElasticWorkerCount": 1,
+                    "maximumNumberOfWorkers": 3,
+                    "name": "myapp-dev-test-api-plan394170d8",
+                    "numberOfSites": 1,
+                    "numberOfWorkers": 1,
+                    "perSiteScaling": false,
+                    "provisioningState": "Succeeded",
+                    "reserved": true,
+                    "resourceGroup": "myapp-dev-test-rg3709adfc",
+                    "sku": {
+                        "capacity": 1,
+                        "family": "B",
+                        "name": "B1",
+                        "size": "B1",
+                        "tier": "Basic"
+                    },
+                    "status": "Ready",
+                    "subscription": "de06a51d-9dc4-49a8-8b8e-b835b8ac72f8",
+                    "targetWorkerCount": 0,
+                    "targetWorkerSizeId": 0,
+                    "type": "Microsoft.Web/serverfarms",
+                    "zoneRedundant": false
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "hyperV": [],
+                    "isXenon": [],
+                    "kind": [],
+                    "location": [],
+                    "perSiteScaling": [],
+                    "reserved": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "sku": [],
+                    "zoneRedundant": []
+                },
+                "created": "2026-03-09T04:45:54.514561649Z",
+                "modified": "2026-03-09T08:27:02.584038924Z",
+                "sourcePosition": "project:///components/api.py#110",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/api.py#110"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#145"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:Server::myapp-dev-test-db",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.DBforPostgreSQL/flexibleServers/myapp-dev-test-dbead18aea",
+                "type": "azure-native:dbforpostgresql:Server",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "administratorLogin": "postgres",
+                    "administratorLoginPassword": "StrongPassword123!",
+                    "availabilityZone": "",
+                    "azureApiVersion": "2025-08-01",
+                    "location": "eastasia",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "serverName": "myapp-dev-test-dbead18aea",
+                    "sku": {
+                        "name": "Standard_B1ms",
+                        "tier": "Burstable"
+                    },
+                    "storage": {
+                        "storageSizeGB": 32
+                    },
+                    "version": "14"
+                },
+                "outputs": {
+                    "administratorLogin": "postgres",
+                    "authConfig": {
+                        "activeDirectoryAuth": "Disabled",
+                        "passwordAuth": "Enabled"
+                    },
+                    "availabilityZone": "3",
+                    "azureApiVersion": "2025-08-01",
+                    "backup": {
+                        "backupRetentionDays": 7,
+                        "earliestRestoreDate": "2026-03-09T08:35:27.4166255+00:00",
+                        "geoRedundantBackup": "Disabled"
+                    },
+                    "dataEncryption": {
+                        "type": "SystemManaged"
+                    },
+                    "fullyQualifiedDomainName": "myapp-dev-test-dbead18aea.postgres.database.azure.com",
+                    "highAvailability": {
+                        "mode": "Disabled",
+                        "state": "NotEnabled"
+                    },
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.DBforPostgreSQL/flexibleServers/myapp-dev-test-dbead18aea",
+                    "location": "East Asia",
+                    "maintenanceWindow": {
+                        "customWindow": "Disabled",
+                        "dayOfWeek": 0,
+                        "startHour": 0,
+                        "startMinute": 0
+                    },
+                    "minorVersion": "21",
+                    "name": "myapp-dev-test-dbead18aea",
+                    "network": {
+                        "publicNetworkAccess": "Enabled"
+                    },
+                    "privateEndpointConnections": [],
+                    "replica": {
+                        "capacity": 5,
+                        "role": "Primary"
+                    },
+                    "replicaCapacity": 5,
+                    "replicationRole": "Primary",
+                    "sku": {
+                        "name": "Standard_B1ms",
+                        "tier": "Burstable"
+                    },
+                    "state": "Ready",
+                    "storage": {
+                        "autoGrow": "Disabled",
+                        "iops": 120,
+                        "storageSizeGB": 32,
+                        "tier": "P4",
+                        "type": ""
+                    },
+                    "systemData": {
+                        "createdAt": "2026-03-09T08:28:00.3676446Z"
+                    },
+                    "type": "Microsoft.DBforPostgreSQL/flexibleServers",
+                    "version": "14"
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "administratorLogin": [],
+                    "administratorLoginPassword": [],
+                    "availabilityZone": [],
+                    "location": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "sku": [],
+                    "storage": [],
+                    "version": []
+                },
+                "created": "2026-03-09T08:31:53.642030197Z",
+                "modified": "2026-03-10T10:01:33.276418896Z",
+                "sourcePosition": "project:///components/postgres.py#61",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/postgres.py#61"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#137"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:network:VirtualNetwork::myapp-dev-test-network-vnet",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Network/virtualNetworks/myapp-dev-test-network-vnet8714bd3b",
+                "type": "azure-native:network:VirtualNetwork",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "addressSpace": {
+                        "addressPrefixes": [
+                            "10.0.0.0/16"
+                        ]
+                    },
+                    "azureApiVersion": "2024-05-01",
+                    "enableDdosProtection": false,
+                    "enableVmProtection": false,
+                    "location": "eastasia",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "virtualNetworkName": "myapp-dev-test-network-vnet8714bd3b"
+                },
+                "outputs": {
+                    "addressSpace": {
+                        "addressPrefixes": [
+                            "10.0.0.0/16"
+                        ]
+                    },
+                    "azureApiVersion": "2024-05-01",
+                    "enableDdosProtection": false,
+                    "etag": "W/\"18291226-613d-4acc-bfd4-fb77d76f7638\"",
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Network/virtualNetworks/myapp-dev-test-network-vnet8714bd3b",
+                    "location": "eastasia",
+                    "name": "myapp-dev-test-network-vnet8714bd3b",
+                    "privateEndpointVNetPolicies": "Disabled",
+                    "provisioningState": "Succeeded",
+                    "resourceGuid": "50cadcd8-c132-428a-ad0a-26191148d6d1",
+                    "subnets": [
+                        {
+                            "addressPrefix": "10.0.1.0/24",
+                            "delegations": [],
+                            "etag": "W/\"18291226-613d-4acc-bfd4-fb77d76f7638\"",
+                            "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Network/virtualNetworks/myapp-dev-test-network-vnet8714bd3b/subnets/myapp-dev-test-network-subnet",
+                            "name": "myapp-dev-test-network-subnet",
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled",
+                            "provisioningState": "Succeeded",
+                            "type": "Microsoft.Network/virtualNetworks/subnets"
+                        }
+                    ],
+                    "type": "Microsoft.Network/virtualNetworks",
+                    "virtualNetworkPeerings": []
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "addressSpace": [],
+                    "enableDdosProtection": [],
+                    "enableVmProtection": [],
+                    "location": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ]
+                },
+                "created": "2026-03-09T08:27:51.092560491Z",
+                "modified": "2026-03-11T07:06:22.297130533Z",
+                "sourcePosition": "project:///components/network.py#50",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/network.py#50"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#130"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:FirewallRule::myapp-dev-test-db-allow-azure",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.DBforPostgreSQL/flexibleServers/myapp-dev-test-dbead18aea/firewallRules/myapp-dev-test-db-allow-azure",
+                "type": "azure-native:dbforpostgresql:FirewallRule",
+                "inputs": {
+                    "azureApiVersion": "2025-08-01",
+                    "endIpAddress": "0.0.0.0",
+                    "firewallRuleName": "myapp-dev-test-db-allow-azure",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "serverName": "myapp-dev-test-dbead18aea",
+                    "startIpAddress": "0.0.0.0"
+                },
+                "outputs": {
+                    "azureApiVersion": "2025-08-01",
+                    "endIpAddress": "0.0.0.0",
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.DBforPostgreSQL/flexibleServers/myapp-dev-test-dbead18aea/firewallRules/myapp-dev-test-db-allow-azure",
+                    "name": "myapp-dev-test-db-allow-azure",
+                    "startIpAddress": "0.0.0.0",
+                    "type": "Microsoft.DBforPostgreSQL/flexibleServers/firewallRules"
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg",
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:Server::myapp-dev-test-db"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "endIpAddress": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "serverName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:Server::myapp-dev-test-db"
+                    ],
+                    "startIpAddress": []
+                },
+                "created": "2026-03-10T10:02:35.751755433Z",
+                "modified": "2026-03-10T10:02:35.751755433Z",
+                "sourcePosition": "project:///components/postgres.py#78",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/postgres.py#78"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#137"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:web:WebApp::myapp-dev-test-api-api",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/sites/myapp-dev-test-api-apif337205f",
+                "type": "azure-native:web:WebApp",
+                "inputs": {
+                    "__createBeforeDelete": true,
+                    "azureApiVersion": "2024-04-01",
+                    "hyperV": false,
+                    "isXenon": false,
+                    "location": "eastasia",
+                    "name": "myapp-dev-test-api-apif337205f",
+                    "reserved": false,
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "scmSiteAlsoStopped": false,
+                    "serverFarmId": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/serverfarms/myapp-dev-test-api-plan394170d8",
+                    "siteConfig": {
+                        "alwaysOn": true,
+                        "appSettings": [
+                            {
+                                "name": "DB_HOST",
+                                "value": "myapp-dev-test-dbead18aea.postgres.database.azure.com"
+                            },
+                            {
+                                "name": "DB_USER",
+                                "value": "postgres"
+                            },
+                            {
+                                "name": "DB_PASSWORD",
+                                "value": "StrongPassword123!"
+                            },
+                            {
+                                "name": "DB_NAME",
+                                "value": "postgres"
+                            },
+                            {
+                                "name": "DB_PORT",
+                                "value": "5432"
+                            },
+                            {
+                                "name": "WEBSITES_PORT",
+                                "value": "8000"
+                            },
+                            {
+                                "name": "ENVIRONMENT",
+                                "value": "production"
+                            },
+                            {
+                                "name": "JWT_SIGNING_KEY",
+                                "value": "dummy"
+                            }
+                        ],
+                        "http20Enabled": true,
+                        "linuxFxVersion": "DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+                        "localMySqlEnabled": false,
+                        "netFrameworkVersion": "v4.6"
+                    }
+                },
+                "outputs": {
+                    "availabilityState": "Normal",
+                    "azureApiVersion": "2024-04-01",
+                    "clientAffinityEnabled": true,
+                    "clientCertEnabled": false,
+                    "clientCertMode": "Required",
+                    "containerSize": 0,
+                    "customDomainVerificationId": "20DBAFF5AD8CE25BF300E2F119531BE38932EFC8BBC66A53CCA20D6982C0B57D",
+                    "dailyMemoryTimeQuota": 0,
+                    "defaultHostName": "myapp-dev-test-api-apif337205f.azurewebsites.net",
+                    "dnsConfiguration": {},
+                    "enabled": true,
+                    "enabledHostNames": [
+                        "myapp-dev-test-api-apif337205f.azurewebsites.net",
+                        "myapp-dev-test-api-apif337205f.scm.azurewebsites.net"
+                    ],
+                    "endToEndEncryptionEnabled": false,
+                    "hostNameSslStates": [
+                        {
+                            "hostType": "Standard",
+                            "name": "myapp-dev-test-api-apif337205f.azurewebsites.net",
+                            "sslState": "Disabled"
+                        },
+                        {
+                            "hostType": "Repository",
+                            "name": "myapp-dev-test-api-apif337205f.scm.azurewebsites.net",
+                            "sslState": "Disabled"
+                        }
+                    ],
+                    "hostNames": [
+                        "myapp-dev-test-api-apif337205f.azurewebsites.net"
+                    ],
+                    "hostNamesDisabled": false,
+                    "httpsOnly": false,
+                    "hyperV": false,
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/sites/myapp-dev-test-api-apif337205f",
+                    "ipMode": "IPv4",
+                    "isXenon": false,
+                    "keyVaultReferenceIdentity": "SystemAssigned",
+                    "kind": "app,linux,container",
+                    "lastModifiedTimeUtc": "2026-03-11T07:06:50.77",
+                    "location": "East Asia",
+                    "name": "myapp-dev-test-api-apif337205f",
+                    "outboundIpAddresses": "20.255.46.238,20.255.109.27,20.247.45.245,20.255.47.19,20.255.47.57,20.6.156.166,20.239.245.193,20.255.122.97,20.255.46.191,4.144.35.191,20.6.182.66,20.255.213.135,20.205.66.0",
+                    "possibleOutboundIpAddresses": "20.255.46.238,20.255.109.27,20.247.45.245,20.255.47.19,20.255.47.57,20.6.156.166,20.239.245.193,20.255.122.97,20.255.46.191,4.144.35.191,20.6.182.66,20.255.213.135,20.255.118.92,20.239.238.219,20.6.182.101,20.6.155.38,20.6.148.150,20.255.223.51,20.255.104.229,20.255.223.84,20.255.212.24,20.255.212.253,4.191.73.121,20.255.124.187,4.144.36.11,20.239.233.185,20.6.156.229,20.247.46.248,4.192.72.189,4.144.39.240,20.205.66.0",
+                    "redundancyMode": "None",
+                    "repositorySiteName": "myapp-dev-test-api-apif337205f",
+                    "reserved": true,
+                    "resourceGroup": "myapp-dev-test-rg3709adfc",
+                    "scmSiteAlsoStopped": false,
+                    "serverFarmId": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Web/serverfarms/myapp-dev-test-api-plan394170d8",
+                    "siteConfig": {
+                        "acrUseManagedIdentityCreds": false,
+                        "alwaysOn": true,
+                        "appCommandLine": "",
+                        "autoHealEnabled": false,
+                        "azureStorageAccounts": {},
+                        "cors": {
+                            "allowedOrigins": [],
+                            "supportCredentials": false
+                        },
+                        "defaultDocuments": [
+                            "Default.htm",
+                            "Default.html",
+                            "Default.asp",
+                            "index.htm",
+                            "index.html",
+                            "iisstart.htm",
+                            "default.aspx",
+                            "index.php",
+                            "hostingstart.html"
+                        ],
+                        "detailedErrorLoggingEnabled": false,
+                        "elasticWebAppScaleLimit": 0,
+                        "experiments": {
+                            "rampUpRules": []
+                        },
+                        "ftpsState": "FtpsOnly",
+                        "functionsRuntimeScaleMonitoringEnabled": false,
+                        "http20Enabled": true,
+                        "httpLoggingEnabled": false,
+                        "ipSecurityRestrictions": [
+                            {
+                                "action": "Allow",
+                                "description": "Allow all access",
+                                "ipAddress": "Any",
+                                "name": "Allow all",
+                                "priority": 2147483647
+                            }
+                        ],
+                        "linuxFxVersion": "DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+                        "loadBalancing": "LeastRequests",
+                        "localMySqlEnabled": false,
+                        "logsDirectorySizeLimit": 35,
+                        "managedPipelineMode": "Integrated",
+                        "minTlsVersion": "1.2",
+                        "minimumElasticInstanceCount": 0,
+                        "netFrameworkVersion": "v4.0",
+                        "nodeVersion": "",
+                        "numberOfWorkers": 1,
+                        "phpVersion": "",
+                        "powerShellVersion": "",
+                        "preWarmedInstanceCount": 0,
+                        "publishingUsername": "$myapp-dev-test-api-apif337205f",
+                        "pythonVersion": "",
+                        "remoteDebuggingEnabled": false,
+                        "requestTracingEnabled": false,
+                        "scmIpSecurityRestrictions": [
+                            {
+                                "action": "Allow",
+                                "description": "Allow all access",
+                                "ipAddress": "Any",
+                                "name": "Allow all",
+                                "priority": 2147483647
+                            }
+                        ],
+                        "scmIpSecurityRestrictionsUseMain": false,
+                        "scmMinTlsVersion": "1.2",
+                        "scmType": "None",
+                        "use32BitWorkerProcess": true,
+                        "virtualApplications": [
+                            {
+                                "physicalPath": "site\\wwwroot",
+                                "preloadEnabled": true,
+                                "virtualPath": "/"
+                            }
+                        ],
+                        "vnetName": "",
+                        "vnetPrivatePortsCount": 0,
+                        "vnetRouteAllEnabled": false,
+                        "webSocketsEnabled": false
+                    },
+                    "sku": "Basic",
+                    "state": "Running",
+                    "storageAccountRequired": false,
+                    "type": "Microsoft.Web/sites",
+                    "usageState": "Normal",
+                    "vnetBackupRestoreEnabled": false,
+                    "vnetContentShareEnabled": false,
+                    "vnetImagePullEnabled": false,
+                    "vnetRouteAllEnabled": false
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg",
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:web:AppServicePlan::myapp-dev-test-api-plan",
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:Server::myapp-dev-test-db"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "hyperV": [],
+                    "isXenon": [],
+                    "location": [],
+                    "reserved": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "scmSiteAlsoStopped": [],
+                    "serverFarmId": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:web:AppServicePlan::myapp-dev-test-api-plan"
+                    ],
+                    "siteConfig": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:dbforpostgresql:Server::myapp-dev-test-db"
+                    ]
+                },
+                "created": "2026-03-10T10:01:58.483497219Z",
+                "modified": "2026-03-11T07:06:52.378079223Z",
+                "sourcePosition": "project:///components/api.py#122",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/api.py#122"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#145"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            },
+            {
+                "urn": "urn:pulumi:dev-test::fastapi-react-starter::azure-native:network:Subnet::myapp-dev-test-network-subnet",
+                "custom": true,
+                "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Network/virtualNetworks/myapp-dev-test-network-vnet8714bd3b/subnets/myapp-dev-test-network-subnet",
+                "type": "azure-native:network:Subnet",
+                "inputs": {
+                    "addressPrefix": "10.0.1.0/24",
+                    "azureApiVersion": "2024-05-01",
+                    "privateEndpointNetworkPolicies": "Disabled",
+                    "privateLinkServiceNetworkPolicies": "Enabled",
+                    "resourceGroupName": "myapp-dev-test-rg3709adfc",
+                    "subnetName": "myapp-dev-test-network-subnet",
+                    "virtualNetworkName": "myapp-dev-test-network-vnet8714bd3b"
+                },
+                "outputs": {
+                    "addressPrefix": "10.0.1.0/24",
+                    "azureApiVersion": "2024-05-01",
+                    "delegations": [],
+                    "etag": "W/\"18291226-613d-4acc-bfd4-fb77d76f7638\"",
+                    "id": "/subscriptions/de06a51d-9dc4-49a8-8b8e-b835b8ac72f8/resourceGroups/myapp-dev-test-rg3709adfc/providers/Microsoft.Network/virtualNetworks/myapp-dev-test-network-vnet8714bd3b/subnets/myapp-dev-test-network-subnet",
+                    "name": "myapp-dev-test-network-subnet",
+                    "privateEndpointNetworkPolicies": "Disabled",
+                    "privateLinkServiceNetworkPolicies": "Enabled",
+                    "provisioningState": "Succeeded",
+                    "type": "Microsoft.Network/virtualNetworks/subnets"
+                },
+                "parent": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:pulumi:Stack::fastapi-react-starter-dev-test",
+                "dependencies": [
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:network:VirtualNetwork::myapp-dev-test-network-vnet",
+                    "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                ],
+                "provider": "urn:pulumi:dev-test::fastapi-react-starter::pulumi:providers:azure-native::default_3_15_0::c9e50de2-583f-4ff3-a5c3-ac25495a8c0e",
+                "propertyDependencies": {
+                    "addressPrefix": [],
+                    "privateEndpointNetworkPolicies": [],
+                    "privateLinkServiceNetworkPolicies": [],
+                    "resourceGroupName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:resources:ResourceGroup::myapp-dev-test-rg"
+                    ],
+                    "virtualNetworkName": [
+                        "urn:pulumi:dev-test::fastapi-react-starter::azure-native:network:VirtualNetwork::myapp-dev-test-network-vnet"
+                    ]
+                },
+                "created": "2026-03-10T10:00:36.470165397Z",
+                "modified": "2026-03-10T10:00:36.470165397Z",
+                "sourcePosition": "project:///components/network.py#59",
+                "stackTrace": [
+                    {
+                        "sourcePosition": "project:///components/network.py#59"
+                    },
+                    {
+                        "sourcePosition": "project:///__main__.py#130"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#86"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/runpy.py#306"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#188"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#211"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#182"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#83"
+                    },
+                    {
+                        "sourcePosition": "project:///venv/lib/python3.10/site-packages/pulumi/runtime/stack.py#185"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/events.py#80"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#1909"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#603"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../../../usr/lib/python3.10/asyncio/base_events.py#636"
+                    },
+                    {
+                        "sourcePosition": "project:///../../../.pulumi/bin/pulumi-language-python-exec#232"
+                    }
+                ]
+            }
+        ]
+    }
+}
