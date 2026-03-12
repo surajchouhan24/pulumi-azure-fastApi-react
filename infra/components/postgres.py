@@ -310,7 +310,7 @@ class Postgres:
                 mode="Disabled"               # now correctly wrapped in object
             )
         )
-        # Database
+        # Databasee
         database = azure.dbforpostgresql.Database(
             f"{name}-db",
             resource_group_name=rg,
