@@ -133,45 +133,192 @@
 #         )
 
 #         self.host = server.fully_qualified_domain_name
+
+
+# import pulumi
+# import pulumi_azure_native as azure
+
+
+# class Postgres:
+
+#     def __init__(self, name, rg, location, subnet_id, password_secret):
+
+#         # Flexible server
+#         server = azure.dbforpostgresql.Server(
+#             name,
+#             resource_group_name=rg,
+#             location=location,
+#             administrator_login="postgres",
+#             administrator_login_password=password_secret,
+#             version="15",
+#             sku=azure.dbforpostgresql.SkuArgs(
+#                 name="Standard_B1ms",
+#                 tier="Burstable",
+#             ),
+#         )
+
+#         # Database
+#         database = azure.dbforpostgresql.Database(
+#             f"{name}-db",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             charset="UTF8",
+#             collation="en_US.UTF8",
+#         )
+
+#         # Firewall rule to allow Azure services
+#         azure.dbforpostgresql.FirewallRule(
+#             f"{name}-allow-azure",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             start_ip_address="0.0.0.0",
+#             end_ip_address="0.0.0.0"
+#         )
+
+#         self.host = server.fully_qualified_domain_name
+#         self.database_name = database.name
+
+
+# import pulumi
+# import pulumi_azure_native as azure
+
+# class Postgres:
+
+#     def __init__(self, name, rg, location, subnet_id, vnet_id, password_secret):
+#         stack = pulumi.get_stack()
+#         admin_user = "pgadmin"
+#         database_name = "appdb"
+
+#         # ------------------------
+#         # Private DNS Zone for PostgreSQL
+#         # ------------------------
+#         dns_zone = azure.privatedns.PrivateZone(
+#             f"{name}-pg-dns",
+#             resource_group_name=rg,
+#             private_zone_name="privatelink.postgres.database.azure.com",
+#             location="global"
+#         )
+
+#         # ------------------------
+#         # Link VNet to DNS Zone
+#         # ------------------------
+#         azure.privatedns.VirtualNetworkLink(
+#             f"{name}-dns-link",
+#             resource_group_name=rg,
+#             private_zone_name=dns_zone.name,
+#             location="global",
+#             virtual_network=azure.privatedns.SubResourceArgs(
+#                 id=vnet_id
+#             ),
+#             registration_enabled=False
+#         )
+
+#         # ------------------------
+#         # PostgreSQL Server
+#         # ------------------------
+#         server = azure.dbforpostgresql.Server(
+#             f"{name}-pg",
+#             resource_group_name=rg,
+#             location=location,
+#             administrator_login=admin_user,
+#             administrator_login_password=password_secret,
+#             version="15",
+#             sku=azure.dbforpostgresql.SkuArgs(
+#                 name="Standard_B1ms" if stack != "production" else "Standard_D2s_v3",
+#                 tier="Burstable" if stack != "production" else "GeneralPurpose",
+#             ),
+#             # storage=dbforpostgresql.StorageArgs(
+#             #     storage_size_gb=32
+#             # ),
+#             # storage_profile=azure.dbforpostgresql.StorageProfileArgs(
+#             #     storage_mb=32768 if stack != "production" else 131072,
+#             #     backup_retention_days=7,
+#             #     geo_redundant_backup="Disabled"
+#             # ),
+#             # Fallback for dev/test if FlexibleServer is not available:
+#             public_network_access="Enabled"
+#         )
+
+#         # ------------------------
+#         # Database
+#         # ------------------------
+#         database = azure.dbforpostgresql.Database(
+#             f"{name}-db",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             charset="UTF8",
+#             collation="en_US.UTF8"
+#         )
+
+#         # ------------------------
+#         # Firewall rule to allow Azure services
+#         # ------------------------
+#         azure.dbforpostgresql.FirewallRule(
+#             f"{name}-allow-azure",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             start_ip_address="0.0.0.0",
+#             end_ip_address="0.0.0.0"
+#         )
+
+#         # Outputs
+#         self.host = server.fully_qualified_domain_name
+#         self.database_name = database.name
+
 import pulumi
 import pulumi_azure_native as azure
+from pulumi_azure_native.dbforpostgresql import HighAvailabilityArgs
 
 
 class Postgres:
+    def __init__(self, name, rg, location, subnet_id, vnet_id, password_secret):
+        stack = pulumi.get_stack()
+        admin_user = "pgadmin"
 
-    def __init__(self, name, rg, location, subnet_id, password_secret):
+        # PostgreSQL Server (legacy Single Server)
+        # server = azure.dbforpostgresql.Server(
+        #     f"{name}-pg",
+        #     resource_group_name=rg,
+        #     location=location,
+        #     administrator_login=admin_user,
+        #     administrator_login_password=password_secret,
+        #     version="15",
+        #     sku=azure.dbforpostgresql.SkuArgs(
+        #         name="Standard_B1ms",  # Basic SKU for dev-test
+        #         tier="Burstable"
+        #     ),
+        # )
 
-        # Flexible server
         server = azure.dbforpostgresql.Server(
-            name,
+            f"{name}-pg",
             resource_group_name=rg,
             location=location,
-            administrator_login="postgres",
+            administrator_login=admin_user,
             administrator_login_password=password_secret,
             version="15",
             sku=azure.dbforpostgresql.SkuArgs(
-                name="Standard_B1ms",
-                tier="Burstable",
+                name="Standard_B1ms",       # SKU for dev/test
+                tier="Burstable"
             ),
+            storage=azure.dbforpostgresql.StorageArgs(
+                storage_size_gb=32
+            ),
+            backup=azure.dbforpostgresql.BackupArgs(
+                backup_retention_days=7
+            ),
+            high_availability=HighAvailabilityArgs(
+                mode="Disabled"               # now correctly wrapped in object
+            )
         )
-
         # Database
         database = azure.dbforpostgresql.Database(
             f"{name}-db",
             resource_group_name=rg,
             server_name=server.name,
             charset="UTF8",
-            collation="en_US.UTF8",
+            collation="en_US.UTF8"
         )
 
-        # Firewall rule to allow Azure services
-        azure.dbforpostgresql.FirewallRule(
-            f"{name}-allow-azure",
-            resource_group_name=rg,
-            server_name=server.name,
-            start_ip_address="0.0.0.0",
-            end_ip_address="0.0.0.0"
-        )
-
+        # Outputs
         self.host = server.fully_qualified_domain_name
         self.database_name = database.name
