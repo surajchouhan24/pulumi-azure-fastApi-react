@@ -18,7 +18,7 @@ def get_database_url() -> str:
     """
     if os.getenv("DATABASE_URL"):
         return os.getenv("DATABASE_URL")
-    
+
     if settings.ENVIRONMENT == "testing" and settings.TEST_DATABASE_URL:
         return settings.TEST_DATABASE_URL
 
