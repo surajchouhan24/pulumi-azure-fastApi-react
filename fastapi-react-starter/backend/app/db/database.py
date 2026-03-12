@@ -4,6 +4,7 @@ from sqlalchemy.pool import AsyncAdaptedQueuePool
 from app.utils.logger import setup_logger
 from app.config import get_settings
 from urllib.parse import quote_plus
+import os
 
 settings = get_settings()
 logger = setup_logger(__name__)
@@ -15,6 +16,11 @@ def get_database_url() -> str:
     Prioritizes TEST_DATABASE_URL if set in 'testing' environment.
     Returns PostgreSQL URL if credentials are provided, otherwise falls back to SQLite.
     """
+    env_db_url = os.getenv("DATABASE_URL")
+    if env_db_url:
+        logger.info("Using DATABASE_URL from environment")
+        return env_db_url
+    
     if settings.ENVIRONMENT == "testing" and settings.TEST_DATABASE_URL:
         return settings.TEST_DATABASE_URL
 

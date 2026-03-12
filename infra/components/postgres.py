@@ -50,38 +50,86 @@
 #     )
 
 #     return server
+
+# import pulumi
+# import pulumi_azure_native as azure
+
+# class Postgres:
+#     def __init__(self, name, rg, location, subnet_id):
+
+#         password = "StrongPassword123!"
+
+#         server = azure.dbforpostgresql.Server(
+#             name,
+#             resource_group_name=rg,
+#             location=location,
+#             administrator_login="postgres",
+#             administrator_login_password=password,
+#             version="14",
+#             sku=azure.dbforpostgresql.SkuArgs(
+#                 name="Standard_B1ms",
+#                 tier="Burstable",
+#             ),
+#             storage=azure.dbforpostgresql.StorageArgs(
+#                 storage_size_gb=32
+#             ),
+#         )
+
+#         # allow Azure services
+#         azure.dbforpostgresql.FirewallRule(
+#             f"{name}-allow-azure",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             start_ip_address="0.0.0.0",
+#             end_ip_address="0.0.0.0",
+#         )
+
+#         self.host = server.fully_qualified_domain_name
+#         self.password = password
+
 import pulumi
 import pulumi_azure_native as azure
 
-class Postgres:
-    def __init__(self, name, rg, location, subnet_id):
 
-        password = "StrongPassword123!"
+class Postgres:
+
+    def __init__(self, name, rg, location, subnet_id, password):
 
         server = azure.dbforpostgresql.Server(
             name,
+
             resource_group_name=rg,
             location=location,
+
             administrator_login="postgres",
             administrator_login_password=password,
-            version="14",
+
+            version="15",
+
             sku=azure.dbforpostgresql.SkuArgs(
                 name="Standard_B1ms",
                 tier="Burstable",
             ),
-            storage=azure.dbforpostgresql.StorageArgs(
-                storage_size_gb=32
-            ),
         )
 
-        # allow Azure services
-        azure.dbforpostgresql.FirewallRule(
-            f"{name}-allow-azure",
+        database = azure.dbforpostgresql.Database(
+            f"{name}-db",
+
             resource_group_name=rg,
             server_name=server.name,
+
+            charset="UTF8",
+            collation="en_US.UTF8",
+        )
+
+        azure.dbforpostgresql.FirewallRule(
+            f"{name}-allow-azure",
+
+            resource_group_name=rg,
+            server_name=server.name,
+
             start_ip_address="0.0.0.0",
             end_ip_address="0.0.0.0",
         )
 
         self.host = server.fully_qualified_domain_name
-        self.password = password
