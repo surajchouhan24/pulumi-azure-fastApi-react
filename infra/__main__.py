@@ -168,6 +168,103 @@
 
 
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+# from components.network import Network
+# from components.postgres import Postgres
+# from components.api import ApiService
+# from components.frontend import Frontend
+# from components.keyvault import KeyVault
+
+
+# config = pulumi.Config()
+
+# env = config.require("environment")
+# location = config.get("location") or "centralindia"
+
+
+# # -------------------------------------------------------
+# # Resource Group
+# # -------------------------------------------------------
+
+# resource_group = azure.resources.ResourceGroup(
+#     f"myapp-{env}-rg",
+#     location=location
+# )
+
+
+# # -------------------------------------------------------
+# # Network
+# # -------------------------------------------------------
+
+# network = Network(
+#     f"myapp-{env}-network",
+#     resource_group.name,
+#     location
+# )
+
+
+# # -------------------------------------------------------
+# # Key Vault
+# # -------------------------------------------------------
+
+# keyvault = KeyVault(
+#     f"myapp-{env}-kv",
+#     resource_group.name,
+#     location
+# )
+
+
+# # -------------------------------------------------------
+# # PostgreSQL Flexible Server
+# # -------------------------------------------------------
+
+# postgres = Postgres(
+#     f"myapp-{env}-db",
+#     resource_group.name,
+#     location,
+#     network.subnet_id,
+#     keyvault.db_password
+# )
+
+
+# # -------------------------------------------------------
+# # FastAPI Backend
+# # -------------------------------------------------------
+
+# api = ApiService(
+#     f"myapp-{env}-api",
+#     resource_group.name,
+#     location,
+#     postgres.host,
+#     keyvault.jwt_key
+# )
+
+
+# # -------------------------------------------------------
+# # React Frontend
+# # -------------------------------------------------------
+
+# frontend = Frontend(
+#     f"myapp-{env}-frontend",
+#     resource_group.name,
+#     location,
+#     api.api_url
+# )
+
+
+# # -------------------------------------------------------
+# # Outputs
+# # -------------------------------------------------------
+
+# pulumi.export("frontendUrl", frontend.url)
+# pulumi.export("apiUrl", api.api_url)
+# pulumi.export("postgresHost", postgres.host)
+# pulumi.export("resourceGroupName", resource_group.name)
+# pulumi.export("keyVaultUri", keyvault.vault_uri)
+# pulumi.export("staticWebAppToken", frontend.token)
+
 import pulumi
 import pulumi_azure_native as azure
 
@@ -177,75 +274,63 @@ from components.api import ApiService
 from components.frontend import Frontend
 from components.keyvault import KeyVault
 
-
 config = pulumi.Config()
-
 env = config.require("environment")
 location = config.get("location") or "centralindia"
 
-
-# -------------------------------------------------------
+# ------------------------
 # Resource Group
-# -------------------------------------------------------
-
+# ------------------------
 resource_group = azure.resources.ResourceGroup(
     f"myapp-{env}-rg",
     location=location
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # Network
-# -------------------------------------------------------
-
+# ------------------------
 network = Network(
     f"myapp-{env}-network",
     resource_group.name,
     location
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # Key Vault
-# -------------------------------------------------------
-
+# ------------------------
 keyvault = KeyVault(
     f"myapp-{env}-kv",
     resource_group.name,
     location
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # PostgreSQL Flexible Server
-# -------------------------------------------------------
-
+# ------------------------
 postgres = Postgres(
     f"myapp-{env}-db",
     resource_group.name,
     location,
     network.subnet_id,
-    keyvault.db_password
+    keyvault.db_password  # pass Pulumi secret directly
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # FastAPI Backend
-# -------------------------------------------------------
-
+# ------------------------
 api = ApiService(
     f"myapp-{env}-api",
     resource_group.name,
     location,
     postgres.host,
+    keyvault.db_password,   # use secret here
+    postgres.database_name, # DB name
     keyvault.jwt_key
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # React Frontend
-# -------------------------------------------------------
-
+# ------------------------
 frontend = Frontend(
     f"myapp-{env}-frontend",
     resource_group.name,
@@ -253,14 +338,13 @@ frontend = Frontend(
     api.api_url
 )
 
-
-# -------------------------------------------------------
+# ------------------------
 # Outputs
-# -------------------------------------------------------
-
+# ------------------------
 pulumi.export("frontendUrl", frontend.url)
 pulumi.export("apiUrl", api.api_url)
 pulumi.export("postgresHost", postgres.host)
+pulumi.export("postgresDb", postgres.database_name)
 pulumi.export("resourceGroupName", resource_group.name)
 pulumi.export("keyVaultUri", keyvault.vault_uri)
 pulumi.export("staticWebAppToken", frontend.token)

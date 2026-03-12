@@ -1,10 +1,9 @@
 config:
-  # azure-native:location: centralindia
   fastapi-react-starter:environment: dev-test
   fastapi-react-starter:location: eastasia
   fastapi-react-starter:dbName: appdb
   fastapi-react-starter:dbUser: postgres
-  fastapi-react-starter:dbPassword:
-    secure: AAABAA19vx0FiZu2IP9zVfvdBUshoE9w6FswJ6v1aKKYigQAuvcIRYOOKk4++o9/ZxI=
   fastapi-react-starter:jwtKey:
-    secure: AAABANJMwAYFotr7v2CIP1CLNCrEPunnkpdIuzTyH6NfPAKFdA==
+    secure: AAABAG4zbJngcKL7dvCpd0heoDx//2kbO1a7psc8nT0ROp9QBw==
+  fastapi-react-starter:dbPassword:
+    secure: AAABAO4WwgM/X08R968OLrIYGvPRbDmjs5H1eyx3bbyKJhjESkTxgj1QP625b+clf/E=
