@@ -295,49 +295,217 @@
 
 #         self.api_url = pulumi.Output.concat("https://", app.default_host_name)
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+# class ApiService:
+#     def __init__(self, name, rg, location, postgres_host, postgres_password, db_name, jwt_key):
+#         env = pulumi.Config().require("environment")
+#         sku_name = "P1v3" if env == "production" else "B1"
+
+#         plan = azure.web.AppServicePlan(
+#             f"{name}-plan",
+#             resource_group_name=rg,
+#             location=location,
+#             kind="linux",
+#             reserved=True,
+#             sku=azure.web.SkuDescriptionArgs(name=sku_name, tier="Basic")
+#         )
+
+#         app = azure.web.WebApp(
+#             f"{name}-api",
+#             resource_group_name=rg,
+#             location=location,
+#             server_farm_id=plan.id,
+#             identity=azure.web.ManagedServiceIdentityArgs(type="SystemAssigned"),
+#             site_config=azure.web.SiteConfigArgs(
+#                 linux_fx_version="DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+#                 always_on=True,
+#                 app_settings=[
+#                     azure.web.NameValuePairArgs(
+#                         name="DATABASE_URL",
+#                         value=pulumi.Output.concat(
+#                             "postgresql://postgres:",
+#                             postgres_password,
+#                             "@",
+#                             postgres_host,
+#                             ":5432/",
+#                             db_name
+#                         )
+#                     ),
+#                     azure.web.NameValuePairArgs(name="JWT_SIGNING_KEY", value=jwt_key),
+#                     azure.web.NameValuePairArgs(name="ENVIRONMENT", value=env),
+#                     azure.web.NameValuePairArgs(name="WEBSITES_PORT", value="8000"),
+#                 ]
+#             )
+#         )
+
+#         self.api_url = pulumi.Output.concat("https://", app.default_host_name)
+
 import pulumi
 import pulumi_azure_native as azure
 
-class ApiService:
-    def __init__(self, name, rg, location, postgres_host, postgres_password, db_name, jwt_key):
-        env = pulumi.Config().require("environment")
-        sku_name = "P1v3" if env == "production" else "B1"
 
+class ApiService:
+
+    def __init__(self, name, rg, location, postgres_host, postgres_password, db_name, jwt_key):
+
+        config = pulumi.Config()
+        env = config.require("environment")
+
+        # Production vs Dev plan
+        if env == "production":
+            sku_name = "P1v3"
+            sku_tier = "PremiumV3"
+        else:
+            sku_name = "B1"
+            sku_tier = "Basic"
+
+        # App Service Plan
         plan = azure.web.AppServicePlan(
             f"{name}-plan",
             resource_group_name=rg,
             location=location,
             kind="linux",
-            reserved=True,
-            sku=azure.web.SkuDescriptionArgs(name=sku_name, tier="Basic")
+            reserved=True,  # required for Linux containers
+            sku=azure.web.SkuDescriptionArgs(
+                name=sku_name,
+                tier=sku_tier,
+            ),
         )
 
+        # Azure Postgres requires username format:
+        # user@servername
+        # Azure Postgres requires username@servername
+        db_user = postgres_host.apply(
+            lambda host: f"postgres@{host.split('.')[0]}"
+        )
+
+        # database_url = pulumi.Output.concat(
+        #     "postgresql://",
+        #     db_user,
+        #     ":",
+        #     postgres_password,
+        #     "@",
+        #     postgres_host,
+        #     ":5432/",
+        #     db_name,
+        # )
+        
+        database_url = pulumi.Output.concat(
+            "postgresql+asyncpg://postgres:",
+            postgres_password,
+            "@",
+            postgres_host,
+            ":5432/",
+            db_name,
+            "?sslmode=require"
+        )
+
+        # Web App
         app = azure.web.WebApp(
             f"{name}-api",
             resource_group_name=rg,
             location=location,
             server_farm_id=plan.id,
-            identity=azure.web.ManagedServiceIdentityArgs(type="SystemAssigned"),
+
+            identity=azure.web.ManagedServiceIdentityArgs(
+                type="SystemAssigned"
+            ),
+
             site_config=azure.web.SiteConfigArgs(
                 linux_fx_version="DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+
                 always_on=True,
+                
                 app_settings=[
+
                     azure.web.NameValuePairArgs(
-                        name="DATABASE_URL",
-                        value=pulumi.Output.concat(
-                            "postgresql://postgres:",
-                            postgres_password,
-                            "@",
-                            postgres_host,
-                            ":5432/",
-                            db_name
-                        )
+                        name="DB_HOST",
+                        value=postgres_host
                     ),
-                    azure.web.NameValuePairArgs(name="JWT_SIGNING_KEY", value=jwt_key),
-                    azure.web.NameValuePairArgs(name="ENVIRONMENT", value=env),
-                    azure.web.NameValuePairArgs(name="WEBSITES_PORT", value="8000"),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_PORT",
+                        value="5432"
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_NAME",
+                        value=db_name
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_USER",
+                        value="postgres"
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_PASSWORD",
+                        value=postgres_password
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="ENVIRONMENT",
+                        value=env
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="JWT_SIGNING_KEY",
+                        value=jwt_key
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="WEBSITES_PORT",
+                        value="8000"
+                    ),
+
                 ]
-            )
+
+                # app_settings=[
+
+                #     # Database connection
+                #     azure.web.NameValuePairArgs(
+                #         name="DATABASE_URL",
+                #         value=database_url
+                #     ),
+
+                #     # JWT
+                #     azure.web.NameValuePairArgs(
+                #         name="JWT_SIGNING_KEY",
+                #         value=jwt_key
+                #     ),
+
+                #     # Environment
+                #     azure.web.NameValuePairArgs(
+                #         name="ENVIRONMENT",
+                #         value=env
+                #     ),
+
+                #     # Required for container apps
+                #     azure.web.NameValuePairArgs(
+                #         name="WEBSITES_PORT",
+                #         value="8000"
+                #     ),
+
+                #     # Prevent Azure storage mount issues
+                #     azure.web.NameValuePairArgs(
+                #         name="WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                #         value="false"
+                #     ),
+
+                #     # Faster container startup
+                #     azure.web.NameValuePairArgs(
+                #         name="DOCKER_ENABLE_CI",
+                #         value="true"
+                #     ),
+                # ],
+            ),
+
+            https_only=True,
         )
 
-        self.api_url = pulumi.Output.concat("https://", app.default_host_name)
+        self.api_url = pulumi.Output.concat(
+            "https://",
+            app.default_host_name
+        )

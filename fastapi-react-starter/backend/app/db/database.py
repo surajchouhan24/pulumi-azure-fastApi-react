@@ -25,7 +25,8 @@ def get_database_url() -> str:
     if settings.DB_NAME:
         # PostgreSQL connection
         password = quote_plus(settings.DB_PASSWORD) if settings.DB_PASSWORD else ""
-        return f"postgresql+asyncpg://{settings.DB_USER}:{password}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+        # return f"postgresql+asyncpg://{settings.DB_USER}:{password}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}"
+        return f"postgresql+asyncpg://{settings.DB_USER}:{password}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}?sslmode=require"
 
     raise ValueError("No database URL found")
 

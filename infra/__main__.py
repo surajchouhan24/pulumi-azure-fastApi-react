@@ -356,7 +356,7 @@ from components.network import Network
 from components.keyvault import KeyVault
 from components.postgres import Postgres
 from components.api import ApiService
-from components.frontend import Frontend  # your existing frontend code
+from components.frontend import Frontend
 
 config = pulumi.Config()
 env = config.require("environment")
@@ -365,18 +365,21 @@ location = config.get("location") or "centralindia"
 # Resource Group
 rg = azure.resources.ResourceGroup(f"myapp-{env}-rg", location=location)
 
-# Network + optional private DNS for prod
-network = Network(f"myapp-{env}-network", rg.name, location,
-                  private_dns_zone_name="postgres.database.azure.com" if env=="production" else None)
+# Network + Private DNS for Postgres
+network = Network(f"myapp-{env}-network", rg.name, location)
 
 # Key Vault
 keyvault = KeyVault(f"myapp-{env}-kv", rg.name, location)
 
 # PostgreSQL server
-postgres = Postgres(f"myapp-{env}-db", rg.name, location,
-                    network.subnet_id,
-                    network.vnet_id,
-                    keyvault.db_password)
+postgres = Postgres(
+    f"myapp-{env}-db",
+    rg.name,
+    location,
+    network.subnet_id,
+    network.dns_zone_id,  # pass PrivateZone id
+    keyvault.db_password
+)
 
 # FastAPI backend
 api = ApiService(f"myapp-{env}-api", rg.name, location,
