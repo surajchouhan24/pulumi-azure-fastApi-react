@@ -22,11 +22,23 @@ class Settings(BaseSettings):
         "https://wonderful-water-020621800.1.azurestaticapps.net",
     ]
 
+    # @field_validator("CORS_ORIGINS", mode="before")
+    # @classmethod
+    # def assemble_cors_origins(cls, v):
+    #     if isinstance(v, str):
+    #         return [i.strip() for i in v.split(",")]
+    #     return v
     @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
     def assemble_cors_origins(cls, v):
+        if not v:
+            return []
+
         if isinstance(v, str):
+            if v.startswith("["):
+                import json
+                return json.loads(v)
             return [i.strip() for i in v.split(",")]
+
         return v
 
     API_PREFIX: str = "/api"
