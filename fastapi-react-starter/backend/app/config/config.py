@@ -5,6 +5,7 @@ from typing import Optional, List
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
 from dotenv import load_dotenv
+import json
 
 load_dotenv()
 
