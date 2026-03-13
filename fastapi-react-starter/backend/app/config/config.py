@@ -19,7 +19,6 @@ class Settings(BaseSettings):
     CORS_ORIGINS: List[str] = [
         "http://localhost:5173",
         "http://localhost:3000",
-        "https://lively-bush-0f7995a00.1.azurestaticapps.net",
         "https://wonderful-water-020621800.1.azurestaticapps.net",
     ]
 
