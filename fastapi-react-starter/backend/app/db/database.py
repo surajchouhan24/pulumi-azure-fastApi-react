@@ -91,7 +91,7 @@
 # async def init_db() -> None:
 #     """
 #     Initialize database tables and perform any startup database operations.
-#     Includes retry logic for initial connection.
+#     Includes retry logic for initial connection.s
 #     """
 #     logger.info("Initializing database")
 #     try:
