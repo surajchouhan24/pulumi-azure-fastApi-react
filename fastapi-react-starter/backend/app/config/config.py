@@ -20,7 +20,7 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://localhost:3000",
         "https://lively-bush-0f7995a00.1.azurestaticapps.net",
-        "https://myapp-dev-test-api886df9b6.azurewebsites.net",
+        "https://wonderful-water-020621800.1.azurestaticapps.net",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")
