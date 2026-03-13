@@ -43,21 +43,15 @@ class Settings(BaseSettings):
     #     return v
 
     @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
     def assemble_cors_origins(cls, v):
-        if not v:
-            return []
-
         if isinstance(v, str):
-            v = v.strip()
-
-            if v.startswith("["):
-                try:
-                    return json.loads(v)
-                except Exception:
-                    return []
-
-            return [i.strip() for i in v.split(",") if i.strip()]
-
+            try:
+                # handle JSON format from Azure
+                return json.loads(v)
+            except Exception:
+                # fallback to comma separated values
+                return [i.strip() for i in v.split(",")]
         return v
 
     API_PREFIX: str = "/api"
@@ -75,7 +69,7 @@ class Settings(BaseSettings):
     DB_SSL_MODE: Optional[str] = None
 
     # JWT Settings
-    SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "secret-key-for-development")
+    SECRET_KEY: str = os.getenv("JWT_SIGNING_KEY", "secret-key-for-development")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
