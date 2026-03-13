@@ -342,24 +342,196 @@
 
 #         self.api_url = pulumi.Output.concat("https://", app.default_host_name)
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+
+# class ApiService:
+
+#     def __init__(self, name, rg, location, postgres_host, postgres_password, db_name, jwt_key):
+
+#         config = pulumi.Config()
+#         env = config.require("environment")
+
+#         # Production vs Dev plan
+#         if env == "production":
+#             sku_name = "P1v3"
+#             sku_tier = "PremiumV3"
+#         else:
+#             sku_name = "B1"
+#             sku_tier = "Basic"
+
+#         # App Service Plan
+#         plan = azure.web.AppServicePlan(
+#             f"{name}-plan",
+#             resource_group_name=rg,
+#             location=location,
+#             kind="linux",
+#             reserved=True,  # required for Linux containers
+#             sku=azure.web.SkuDescriptionArgs(
+#                 name=sku_name,
+#                 tier=sku_tier,
+#             ),
+#         )
+
+#         # Azure Postgres requires username format:
+#         # user@servername
+#         # Azure Postgres requires username@servername
+#         db_user = postgres_host.apply(
+#             lambda host: f"postgres@{host.split('.')[0]}"
+#         )
+
+#         # database_url = pulumi.Output.concat(
+#         #     "postgresql://",
+#         #     db_user,
+#         #     ":",
+#         #     postgres_password,
+#         #     "@",
+#         #     postgres_host,
+#         #     ":5432/",
+#         #     db_name,
+#         # )
+        
+#         database_url = pulumi.Output.concat(
+#             "postgresql+asyncpg://postgres:",
+#             postgres_password,
+#             "@",
+#             postgres_host,
+#             ":5432/",
+#             db_name,
+#             "?sslmode=require"
+#         )
+
+#         # Web App
+#         app = azure.web.WebApp(
+#             f"{name}-api",
+#             resource_group_name=rg,
+#             location=location,
+#             server_farm_id=plan.id,
+
+#             identity=azure.web.ManagedServiceIdentityArgs(
+#                 type="SystemAssigned"
+#             ),
+
+#             site_config=azure.web.SiteConfigArgs(
+#                 linux_fx_version="DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+
+#                 always_on=True,
+                
+#                 app_settings=[
+
+#                     azure.web.NameValuePairArgs(
+#                         name="DB_HOST",
+#                         value=postgres_host
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="DB_PORT",
+#                         value="5432"
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="DB_NAME",
+#                         value=db_name
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="DB_USER",
+#                         value="postgres"
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="DB_PASSWORD",
+#                         value=postgres_password
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="ENVIRONMENT",
+#                         value=env
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="JWT_SIGNING_KEY",
+#                         value=jwt_key
+#                     ),
+
+#                     azure.web.NameValuePairArgs(
+#                         name="WEBSITES_PORT",
+#                         value="8000"
+#                     ),
+
+#                 ]
+
+#                 # app_settings=[
+
+#                 #     # Database connection
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="DATABASE_URL",
+#                 #         value=database_url
+#                 #     ),
+
+#                 #     # JWT
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="JWT_SIGNING_KEY",
+#                 #         value=jwt_key
+#                 #     ),
+
+#                 #     # Environment
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="ENVIRONMENT",
+#                 #         value=env
+#                 #     ),
+
+#                 #     # Required for container apps
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="WEBSITES_PORT",
+#                 #         value="8000"
+#                 #     ),
+
+#                 #     # Prevent Azure storage mount issues
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+#                 #         value="false"
+#                 #     ),
+
+#                 #     # Faster container startup
+#                 #     azure.web.NameValuePairArgs(
+#                 #         name="DOCKER_ENABLE_CI",
+#                 #         value="true"
+#                 #     ),
+#                 # ],
+#             ),
+
+#             https_only=True,
+#         )
+
+#         self.api_url = pulumi.Output.concat(
+#             "https://",
+#             app.default_host_name
+#         )
+
 import pulumi
 import pulumi_azure_native as azure
 
 
 class ApiService:
 
-    def __init__(self, name, rg, location, postgres_host, postgres_password, db_name, jwt_key):
+    def __init__(
+        self,
+        name,
+        rg,
+        location,
+        postgres_host,
+        app_subnet_id,
+        db_password_secret_uri,
+        jwt_secret_uri,
+        frontend_host,
+    ):
 
+        stack = pulumi.get_stack()
         config = pulumi.Config()
-        env = config.require("environment")
 
-        # Production vs Dev plan
-        if env == "production":
-            sku_name = "P1v3"
-            sku_tier = "PremiumV3"
-        else:
-            sku_name = "B1"
-            sku_tier = "Basic"
+        backend_image = config.require("backendImage")
 
         # App Service Plan
         plan = azure.web.AppServicePlan(
@@ -367,39 +539,12 @@ class ApiService:
             resource_group_name=rg,
             location=location,
             kind="linux",
-            reserved=True,  # required for Linux containers
+            reserved=True,
+
             sku=azure.web.SkuDescriptionArgs(
-                name=sku_name,
-                tier=sku_tier,
-            ),
-        )
-
-        # Azure Postgres requires username format:
-        # user@servername
-        # Azure Postgres requires username@servername
-        db_user = postgres_host.apply(
-            lambda host: f"postgres@{host.split('.')[0]}"
-        )
-
-        # database_url = pulumi.Output.concat(
-        #     "postgresql://",
-        #     db_user,
-        #     ":",
-        #     postgres_password,
-        #     "@",
-        #     postgres_host,
-        #     ":5432/",
-        #     db_name,
-        # )
-        
-        database_url = pulumi.Output.concat(
-            "postgresql+asyncpg://postgres:",
-            postgres_password,
-            "@",
-            postgres_host,
-            ":5432/",
-            db_name,
-            "?sslmode=require"
+                name="B1",
+                tier="Basic"
+            )
         )
 
         # Web App
@@ -407,22 +552,57 @@ class ApiService:
             f"{name}-api",
             resource_group_name=rg,
             location=location,
+
             server_farm_id=plan.id,
 
             identity=azure.web.ManagedServiceIdentityArgs(
                 type="SystemAssigned"
             ),
 
+            # VNet integration
+            virtual_network_subnet_id=app_subnet_id,
+
             site_config=azure.web.SiteConfigArgs(
-                linux_fx_version="DOCKER|docker.io/surajchauhan24/fastapi-backend:latest",
+
+                linux_fx_version=pulumi.Output.concat(
+                    "DOCKER|",
+                    backend_image
+                ),
 
                 always_on=True,
-                
+
+                cors=azure.web.CorsSettingsArgs(
+                    allowed_origins=[
+                        pulumi.Output.concat("https://", frontend_host)
+                    ],
+                    support_credentials=True
+                ),
+
                 app_settings=[
 
+                    # Database
                     azure.web.NameValuePairArgs(
                         name="DB_HOST",
                         value=postgres_host
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_USER",
+                        value="pgadmin"
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_PASSWORD",
+                        value=pulumi.Output.concat(
+                            "@Microsoft.KeyVault(SecretUri=",
+                            db_password_secret_uri,
+                            ")"
+                        )
+                    ),
+
+                    azure.web.NameValuePairArgs(
+                        name="DB_NAME",
+                        value="appdb"
                     ),
 
                     azure.web.NameValuePairArgs(
@@ -430,29 +610,20 @@ class ApiService:
                         value="5432"
                     ),
 
-                    azure.web.NameValuePairArgs(
-                        name="DB_NAME",
-                        value=db_name
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_USER",
-                        value="postgres"
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="DB_PASSWORD",
-                        value=postgres_password
-                    ),
-
-                    azure.web.NameValuePairArgs(
-                        name="ENVIRONMENT",
-                        value=env
-                    ),
-
+                    # JWT Secret
                     azure.web.NameValuePairArgs(
                         name="JWT_SIGNING_KEY",
-                        value=jwt_key
+                        value=pulumi.Output.concat(
+                            "@Microsoft.KeyVault(SecretUri=",
+                            jwt_secret_uri,
+                            ")"
+                        )
+                    ),
+
+                    # Azure networking
+                    azure.web.NameValuePairArgs(
+                        name="WEBSITE_VNET_ROUTE_ALL",
+                        value="1"
                     ),
 
                     azure.web.NameValuePairArgs(
@@ -460,52 +631,21 @@ class ApiService:
                         value="8000"
                     ),
 
+                    azure.web.NameValuePairArgs(
+                        name="ENVIRONMENT",
+                        value=stack
+                    ),
                 ]
-
-                # app_settings=[
-
-                #     # Database connection
-                #     azure.web.NameValuePairArgs(
-                #         name="DATABASE_URL",
-                #         value=database_url
-                #     ),
-
-                #     # JWT
-                #     azure.web.NameValuePairArgs(
-                #         name="JWT_SIGNING_KEY",
-                #         value=jwt_key
-                #     ),
-
-                #     # Environment
-                #     azure.web.NameValuePairArgs(
-                #         name="ENVIRONMENT",
-                #         value=env
-                #     ),
-
-                #     # Required for container apps
-                #     azure.web.NameValuePairArgs(
-                #         name="WEBSITES_PORT",
-                #         value="8000"
-                #     ),
-
-                #     # Prevent Azure storage mount issues
-                #     azure.web.NameValuePairArgs(
-                #         name="WEBSITES_ENABLE_APP_SERVICE_STORAGE",
-                #         value="false"
-                #     ),
-
-                #     # Faster container startup
-                #     azure.web.NameValuePairArgs(
-                #         name="DOCKER_ENABLE_CI",
-                #         value="true"
-                #     ),
-                # ],
             ),
 
-            https_only=True,
+            https_only=True
         )
 
         self.api_url = pulumi.Output.concat(
             "https://",
             app.default_host_name
+        )
+
+        self.identity_principal_id = app.identity.apply(
+            lambda i: i.principal_id
         )

@@ -349,6 +349,57 @@
 # pulumi.export("keyVaultUri", keyvault.vault_uri)
 # pulumi.export("staticWebAppToken", frontend.token)
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+# from components.network import Network
+# from components.keyvault import KeyVault
+# from components.postgres import Postgres
+# from components.api import ApiService
+# from components.frontend import Frontend
+
+# config = pulumi.Config()
+# env = config.require("environment")
+# location = config.get("location") or "centralindia"
+
+# # Resource Group
+# rg = azure.resources.ResourceGroup(f"myapp-{env}-rg", location=location)
+
+# # Network + Private DNS for Postgres
+# network = Network(f"myapp-{env}-network", rg.name, location)
+
+# # Key Vault
+# keyvault = KeyVault(f"myapp-{env}-kv", rg.name, location)
+
+# # PostgreSQL server
+# postgres = Postgres(
+#     f"myapp-{env}-db",
+#     rg.name,
+#     location,
+#     network.subnet_id,
+#     network.dns_zone_id,  # pass PrivateZone id
+#     keyvault.db_password
+# )
+
+# # FastAPI backend
+# api = ApiService(f"myapp-{env}-api", rg.name, location,
+#                  postgres.host,
+#                  keyvault.db_password,
+#                  postgres.database_name,
+#                  keyvault.jwt_key)
+
+# # React frontend
+# frontend = Frontend(f"myapp-{env}-frontend", rg.name, location, api.api_url)
+
+# # Pulumi outputs
+# pulumi.export("frontendUrl", frontend.url)
+# pulumi.export("apiUrl", api.api_url)
+# pulumi.export("postgresHost", postgres.host)
+# pulumi.export("postgresDb", postgres.database_name)
+# pulumi.export("resourceGroupName", rg.name)
+# pulumi.export("keyVaultUri", keyvault.vault_uri)
+# pulumi.export("staticWebAppToken", frontend.token)
+
 import pulumi
 import pulumi_azure_native as azure
 
@@ -358,44 +409,80 @@ from components.postgres import Postgres
 from components.api import ApiService
 from components.frontend import Frontend
 
+# Pulumi config
 config = pulumi.Config()
-env = config.require("environment")
 location = config.get("location") or "centralindia"
 
-# Resource Group
-rg = azure.resources.ResourceGroup(f"myapp-{env}-rg", location=location)
+# Environment
+stack = pulumi.get_stack()
 
-# Network + Private DNS for Postgres
-network = Network(f"myapp-{env}-network", rg.name, location)
+project = "myapp"
+name_prefix = f"{project}-{stack}"
+
+# Resource Group
+rg = azure.resources.ResourceGroup(
+    f"{name_prefix}-rg",
+    location=location
+)
+
+# Network
+network = Network(
+    name_prefix,
+    rg.name,
+    location
+)
 
 # Key Vault
-keyvault = KeyVault(f"myapp-{env}-kv", rg.name, location)
+keyvault = KeyVault(
+    name_prefix,
+    rg.name,
+    location
+)
 
-# PostgreSQL server
+# PostgreSQL
 postgres = Postgres(
-    f"myapp-{env}-db",
+    name_prefix,
     rg.name,
     location,
-    network.subnet_id,
-    network.dns_zone_id,  # pass PrivateZone id
+    network.db_subnet_id,
+    network.dns_zone_id,
     keyvault.db_password
 )
 
-# FastAPI backend
-api = ApiService(f"myapp-{env}-api", rg.name, location,
-                 postgres.host,
-                 keyvault.db_password,
-                 postgres.database_name,
-                 keyvault.jwt_key)
+# Frontend (React)
+frontend = Frontend(
+    name_prefix,
+    rg.name,
+    location
+)
 
-# React frontend
-frontend = Frontend(f"myapp-{env}-frontend", rg.name, location, api.api_url)
+# API (FastAPI backend)
+api = ApiService(
+    name_prefix,
+    rg.name,
+    location,
+    postgres.host,
+    network.app_subnet_id,
+    keyvault.db_password_secret_uri,
+    keyvault.jwt_secret_uri,
+    frontend.hostname
+)
 
-# Pulumi outputs
+# Key Vault access for API identity
+azure.authorization.RoleAssignment(
+    f"{name_prefix}-kv-access",
+    scope=keyvault.vault.id,
+
+    role_definition_id="/providers/Microsoft.Authorization/roleDefinitions/4633458b-17de-408a-b874-0445c86b69e6",
+
+    principal_id=api.identity_principal_id,
+    principal_type="ServicePrincipal",
+)
+
+# Pulumi Outputs
 pulumi.export("frontendUrl", frontend.url)
 pulumi.export("apiUrl", api.api_url)
 pulumi.export("postgresHost", postgres.host)
-pulumi.export("postgresDb", postgres.database_name)
 pulumi.export("resourceGroupName", rg.name)
 pulumi.export("keyVaultUri", keyvault.vault_uri)
-pulumi.export("staticWebAppToken", frontend.token)
+pulumi.export("staticWebAppToken", frontend.deployment_token)

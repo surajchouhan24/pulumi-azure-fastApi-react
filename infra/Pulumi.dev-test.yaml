@@ -7,3 +7,4 @@ config:
     secure: AAABAG4zbJngcKL7dvCpd0heoDx//2kbO1a7psc8nT0ROp9QBw==
   fastapi-react-starter:dbPassword:
     secure: AAABAO4WwgM/X08R968OLrIYGvPRbDmjs5H1eyx3bbyKJhjESkTxgj1QP625b+clf/E=
+  fastapi-react-starter:backendImage: docker.io/surajchauhan24/fastapi-backend:latest

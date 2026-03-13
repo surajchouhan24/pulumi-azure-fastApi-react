@@ -123,14 +123,59 @@
 #             swa.default_hostname
 #         )
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+
+# class Frontend:
+
+#     def __init__(self, name, rg, location, api_url):
+
+#         swa = azure.web.StaticSite(
+#             f"{name}-frontend",
+#             resource_group_name=rg,
+#             location=location,
+
+#             sku=azure.web.SkuDescriptionArgs(
+#                 name="Free",
+#                 tier="Free",
+#             ),
+
+#             repository_url="https://github.com/surajchouhan24/pulumi-azure-fastApi-react.git",
+#             branch="main",
+
+#             build_properties=azure.web.StaticSiteBuildPropertiesArgs(
+#                 app_location="fastapi-react-starter/frontend",
+#                 api_location="",
+#                 app_artifact_location="dist",
+#                 app_build_command="npm run build",
+#             ),
+#         )
+
+#         self.url = pulumi.Output.concat(
+#             "https://",
+#             swa.default_hostname
+#         )
+        
+#             # get deployment token
+#         secrets = azure.web.list_static_site_secrets_output(
+#             resource_group_name=rg,
+#             name=swa.name
+#         )
+
+#         self.token = secrets.apply(
+#             lambda s: s.properties["apiKey"]
+#         )
+
 import pulumi
 import pulumi_azure_native as azure
 
 
 class Frontend:
 
-    def __init__(self, name, rg, location, api_url):
+    def __init__(self, name, rg, location):
 
+        # Static Web App
         swa = azure.web.StaticSite(
             f"{name}-frontend",
             resource_group_name=rg,
@@ -152,17 +197,22 @@ class Frontend:
             ),
         )
 
-        self.url = pulumi.Output.concat(
-            "https://",
-            swa.default_hostname
-        )
-        
-            # get deployment token
+        # Get deployment token
         secrets = azure.web.list_static_site_secrets_output(
             resource_group_name=rg,
             name=swa.name
+            # opts=pulumi.InvokeOptions(depends_on=[swa])
         )
 
-        self.token = secrets.apply(
+        deployment_token = secrets.apply(
             lambda s: s.properties["apiKey"]
         )
+
+        # Outputs
+        self.hostname = swa.default_hostname
+
+        self.url = swa.default_hostname.apply(
+            lambda h: f"https://{h}"
+        )
+
+        self.deployment_token = deployment_token

@@ -377,60 +377,129 @@
 
 #         self.host = server.fully_qualified_domain_name
 #         self.database_name = database.name
+# import pulumi_azure_native as azure
+# from pulumi_azure_native.dbforpostgresql import HighAvailabilityArgs, StorageArgs, BackupArgs, SkuArgs, NetworkArgs
+
+# class Postgres:
+#     def __init__(self, name, rg, location, subnet_id, private_dns_zone_id, password_secret):
+#         admin_user = "pgadmin"
+
+#         # PostgreSQL Flexible Server
+#         # server = azure.dbforpostgresql.Server(
+#         #     f"{name}-pg",
+#         #     resource_group_name=rg,
+#         #     location=location,
+#         #     administrator_login=admin_user,
+#         #     administrator_login_password=password_secret,
+#         #     version="15",
+#         #     sku=SkuArgs(
+#         #         name="Standard_B1ms",
+#         #         tier="Burstable"
+#         #     ),
+#         #     storage=StorageArgs(
+#         #         storage_size_gb=32
+#         #     ),
+#         #     backup=BackupArgs(
+#         #         backup_retention_days=7
+#         #     ),
+#         #     high_availability=HighAvailabilityArgs(
+#         #         mode="Disabled"
+#         #     ),
+#         #     network=NetworkArgs(
+#         #         delegated_subnet_resource_id=subnet_id,
+#         #         private_dns_zone_arm_resource_id=private_dns_zone_id  # use argument here
+#         #     ),
+#         # )
+#         server = azure.dbforpostgresql.Server(
+#             f"{name}-pg",
+#             resource_group_name=rg,
+#             location=location,
+#             administrator_login=admin_user,
+#             administrator_login_password=password_secret,
+#             version="15",
+#             sku=SkuArgs(name="Standard_B1ms", tier="Burstable"),
+#             storage=StorageArgs(storage_size_gb=32),
+#             backup=BackupArgs(backup_retention_days=7),
+#             high_availability=HighAvailabilityArgs(mode="Disabled"),
+#             ssl_enforcement="Enabled"
+#             # public_network_access="Enabled"  # <- remove network block entirely
+#         )
+
+#         # Firewall rule: allow Azure services
+#         azure.dbforpostgresql.FirewallRule(
+#             f"{name}-allow-azure",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             start_ip_address="0.0.0.0",
+#             end_ip_address="0.0.0.0"
+#         )
+
+#         # Database
+#         database = azure.dbforpostgresql.Database(
+#             f"{name}-db",
+#             resource_group_name=rg,
+#             server_name=server.name,
+#             charset="UTF8",
+#             collation="en_US.UTF8"
+#         )
+
+#         # Outputs
+#         self.host = server.fully_qualified_domain_name
+#         self.database_name = database.name
+
+
 import pulumi_azure_native as azure
-from pulumi_azure_native.dbforpostgresql import HighAvailabilityArgs, StorageArgs, BackupArgs, SkuArgs, NetworkArgs
+from pulumi_azure_native.dbforpostgresql import (
+    HighAvailabilityArgs,
+    StorageArgs,
+    BackupArgs,
+    SkuArgs,
+    NetworkArgs,
+)
+
 
 class Postgres:
     def __init__(self, name, rg, location, subnet_id, private_dns_zone_id, password_secret):
+
         admin_user = "pgadmin"
+        database_name = "appdb"
 
         # PostgreSQL Flexible Server
-        # server = azure.dbforpostgresql.Server(
-        #     f"{name}-pg",
-        #     resource_group_name=rg,
-        #     location=location,
-        #     administrator_login=admin_user,
-        #     administrator_login_password=password_secret,
-        #     version="15",
-        #     sku=SkuArgs(
-        #         name="Standard_B1ms",
-        #         tier="Burstable"
-        #     ),
-        #     storage=StorageArgs(
-        #         storage_size_gb=32
-        #     ),
-        #     backup=BackupArgs(
-        #         backup_retention_days=7
-        #     ),
-        #     high_availability=HighAvailabilityArgs(
-        #         mode="Disabled"
-        #     ),
-        #     network=NetworkArgs(
-        #         delegated_subnet_resource_id=subnet_id,
-        #         private_dns_zone_arm_resource_id=private_dns_zone_id  # use argument here
-        #     ),
-        # )
         server = azure.dbforpostgresql.Server(
             f"{name}-pg",
             resource_group_name=rg,
             location=location,
+
             administrator_login=admin_user,
             administrator_login_password=password_secret,
-            version="15",
-            sku=SkuArgs(name="Standard_B1ms", tier="Burstable"),
-            storage=StorageArgs(storage_size_gb=32),
-            backup=BackupArgs(backup_retention_days=7),
-            high_availability=HighAvailabilityArgs(mode="Disabled"),
-            # public_network_access="Enabled"  # <- remove network block entirely
-        )
 
-        # Firewall rule: allow Azure services
-        azure.dbforpostgresql.FirewallRule(
-            f"{name}-allow-azure",
-            resource_group_name=rg,
-            server_name=server.name,
-            start_ip_address="0.0.0.0",
-            end_ip_address="0.0.0.0"
+            version="15",
+
+            sku=SkuArgs(
+                name="Standard_B1ms",
+                tier="Burstable",
+            ),
+
+            storage=StorageArgs(
+                storage_size_gb=32
+            ),
+
+            backup=BackupArgs(
+                backup_retention_days=7
+            ),
+
+            high_availability=HighAvailabilityArgs(
+                mode="Disabled"
+            ),
+
+            # 🔑 Private networking
+            network=NetworkArgs(
+                delegated_subnet_resource_id=subnet_id,
+                private_dns_zone_arm_resource_id=private_dns_zone_id,
+            ),
+
+            # disable public internet access
+            # public_network_access="Disabled",
         )
 
         # Database
@@ -438,8 +507,9 @@ class Postgres:
             f"{name}-db",
             resource_group_name=rg,
             server_name=server.name,
+            database_name=database_name,
             charset="UTF8",
-            collation="en_US.UTF8"
+            collation="en_US.UTF8",
         )
 
         # Outputs

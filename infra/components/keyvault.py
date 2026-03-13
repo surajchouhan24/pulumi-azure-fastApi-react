@@ -158,51 +158,145 @@
 #         self.jwt_key = jwt_key
 
 
+# import pulumi
+# import pulumi_azure_native as azure
+
+# class KeyVault:
+#     def __init__(self, name, rg, location):
+#         config = pulumi.Config()
+#         client = azure.authorization.get_client_config()
+#         stack = pulumi.get_stack()
+
+#         vault_name = f"{name}-{stack}".replace("-", "")[:24].lower()
+
+#         vault = azure.keyvault.Vault(
+#             name,
+#             vault_name=vault_name,
+#             resource_group_name=rg,
+#             location=location,
+#             properties=azure.keyvault.VaultPropertiesArgs(
+#                 tenant_id=client.tenant_id,
+#                 sku=azure.keyvault.SkuArgs(
+#                     family="A",
+#                     name="standard",
+#                 ),
+#                 enable_rbac_authorization=True,
+#                 access_policies=[]
+#             )
+#         )
+
+#         # Secrets
+#         db_password = config.require_secret("dbPassword")
+#         jwt_key = config.require_secret("jwtKey")
+
+#         azure.keyvault.Secret(
+#             f"{name}-db-password",
+#             resource_group_name=rg,
+#             vault_name=vault.name,
+#             properties=azure.keyvault.SecretPropertiesArgs(value=db_password)
+#         )
+
+#         azure.keyvault.Secret(
+#             f"{name}-jwt-key",
+#             resource_group_name=rg,
+#             vault_name=vault.name,
+#             properties=azure.keyvault.SecretPropertiesArgs(value=jwt_key)
+#         )
+
+#         self.vault_uri = vault.properties.vault_uri
+#         self.db_password = db_password
+#         self.jwt_key = jwt_key
+
 import pulumi
 import pulumi_azure_native as azure
+import pulumi_random as random
+
 
 class KeyVault:
+
     def __init__(self, name, rg, location):
+
         config = pulumi.Config()
         client = azure.authorization.get_client_config()
-        stack = pulumi.get_stack()
 
-        vault_name = f"{name}-{stack}".replace("-", "")[:24].lower()
+        # Generate unique suffix
+        suffix = random.RandomId(
+            f"{name}-kv-suffix",
+            byte_length=3
+        )
 
+        vault_name = pulumi.Output.concat(
+            name, "-kv-", suffix.hex
+        )
+
+        # Create Key Vault
         vault = azure.keyvault.Vault(
-            name,
+            f"{name}-kv",
             vault_name=vault_name,
             resource_group_name=rg,
             location=location,
+
             properties=azure.keyvault.VaultPropertiesArgs(
                 tenant_id=client.tenant_id,
+
                 sku=azure.keyvault.SkuArgs(
                     family="A",
                     name="standard",
                 ),
+
                 enable_rbac_authorization=True,
-                access_policies=[]
+
+                # # recommended settings
+                # enable_soft_delete=True,
+                # enable_purge_protection=False,
+
+                # access_policies=[]
             )
         )
 
-        # Secrets
+        # Get secrets from Pulumi config
         db_password = config.require_secret("dbPassword")
         jwt_key = config.require_secret("jwtKey")
 
-        azure.keyvault.Secret(
-            f"{name}-db-password",
+        # Store DB password
+        db_secret = azure.keyvault.Secret(
+            f"{name}-db-secret",
             resource_group_name=rg,
             vault_name=vault.name,
-            properties=azure.keyvault.SecretPropertiesArgs(value=db_password)
+            properties=azure.keyvault.SecretPropertiesArgs(
+                value=db_password
+            )
         )
 
-        azure.keyvault.Secret(
-            f"{name}-jwt-key",
+        # Store JWT key
+        jwt_secret = azure.keyvault.Secret(
+            f"{name}-jwt-secret",
             resource_group_name=rg,
             vault_name=vault.name,
-            properties=azure.keyvault.SecretPropertiesArgs(value=jwt_key)
+            properties=azure.keyvault.SecretPropertiesArgs(
+                value=jwt_key
+            )
         )
 
+        # Export outputs
+        self.vault = vault
         self.vault_uri = vault.properties.vault_uri
+
+        # secret values
         self.db_password = db_password
         self.jwt_key = jwt_key
+
+        # secret URIs (important for App Service)
+        self.db_password_secret_uri = pulumi.Output.concat(
+            vault.properties.vault_uri,
+            "secrets/",
+            db_secret.name,
+            "/"
+        )
+
+        self.jwt_secret_uri = pulumi.Output.concat(
+            vault.properties.vault_uri,
+            "secrets/",
+            jwt_secret.name,
+            "/"
+        )
