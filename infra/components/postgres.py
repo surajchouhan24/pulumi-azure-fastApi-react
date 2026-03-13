@@ -447,6 +447,7 @@
 #         self.host = server.fully_qualified_domain_name
 #         self.database_name = database.name
 
+import pulumi
 
 import pulumi_azure_native as azure
 from pulumi_azure_native.dbforpostgresql import (
@@ -459,7 +460,7 @@ from pulumi_azure_native.dbforpostgresql import (
 
 
 class Postgres:
-    def __init__(self, name, rg, location, subnet_id, private_dns_zone_id, password_secret):
+    def __init__(self, name, rg, location, subnet_id, private_dns_zone_id, password_secret, dns_link):
 
         admin_user = "pgadmin"
         database_name = "appdb"
@@ -496,6 +497,10 @@ class Postgres:
             network=NetworkArgs(
                 delegated_subnet_resource_id=subnet_id,
                 private_dns_zone_arm_resource_id=private_dns_zone_id,
+            ),
+            
+            opts=pulumi.ResourceOptions(
+                depends_on=[dns_link]   # ⭐ IMPORTANT
             ),
 
             # disable public internet access

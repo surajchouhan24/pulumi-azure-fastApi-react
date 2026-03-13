@@ -446,7 +446,8 @@ postgres = Postgres(
     location,
     network.db_subnet_id,
     network.dns_zone_id,
-    keyvault.db_password
+    keyvault.db_password,
+    network.dns_link
 )
 
 # Frontend (React)

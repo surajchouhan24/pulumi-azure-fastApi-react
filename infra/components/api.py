@@ -637,10 +637,7 @@ class ApiService:
                     ),
                     azure.web.NameValuePairArgs(
                         name="CORS_ORIGINS",
-                        value=pulumi.Output.json_dumps([
-                            "https://wonderful-water-020621800.1.azurestaticapps.net",
-                            "http://localhost:5173"
-                        ])
+                        value='["https://wonderful-water-020621800.1.azurestaticapps.net","http://localhost:5173"]'
                     ),
                     azure.web.NameValuePairArgs(
                         name="ENVIRONMENT",
