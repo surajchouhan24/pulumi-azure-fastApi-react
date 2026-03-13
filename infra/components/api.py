@@ -570,13 +570,17 @@ class ApiService:
                 ),
 
                 always_on=True,
-
                 cors=azure.web.CorsSettingsArgs(
-                    allowed_origins=[
-                        pulumi.Output.concat("https://", frontend_host)
-                    ],
+                    allowed_origins=[frontend_host],  # Use full URL including https://
                     support_credentials=True
                 ),
+
+                # cors=azure.web.CorsSettingsArgs(
+                #     allowed_origins=[
+                #         pulumi.Output.concat("https://", frontend_host)
+                #     ],
+                #     support_credentials=True
+                # ),
 
                 app_settings=[
 
@@ -629,6 +633,10 @@ class ApiService:
                     azure.web.NameValuePairArgs(
                         name="WEBSITES_PORT",
                         value="8000"
+                    ),
+                    azure.web.NameValuePairArgs(
+                        name="CORS_ORIGINS",
+                        value='["https://wonderful-water-020621800.1.azurestaticapps.net","http://localhost:5173"]'
                     ),
 
                     azure.web.NameValuePairArgs(
