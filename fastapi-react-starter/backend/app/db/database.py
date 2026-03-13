@@ -33,7 +33,7 @@ def get_database_url() -> str:
 
 def create_engine_with_retry(database_url: str):
     """
-    Creates an async engine with retry logic and appropriate configuration
+    Creates an async engine with retry logic and appropriate configurationf
     based on the database type.
     """
     connect_args = {}
