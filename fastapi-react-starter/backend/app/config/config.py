@@ -1,79 +1,169 @@
+# import os
+# from pathlib import Path
+# from functools import lru_cache
+# from typing import Optional, List
+# from pydantic_settings import BaseSettings
+# from pydantic import field_validator
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+
+# class Settings(BaseSettings):
+#     APP_VERSION: str = "1.0.0"
+#     APP_NAME: str = "FastAPI React Starter"
+#     APP_DESCRIPTION: str = "FastAPI React Starter Template"
+#     ENVIRONMENT: str = "development"
+#     DATABASE_URL: str = ""
+#     TEST_DATABASE_URL: Optional[str] = "sqlite+aiosqlite:///./test_app.db"
+#     CORS_ORIGINS: List[str] = [
+#         "http://localhost:5173",
+#         "http://localhost:3000",
+#         "https://wonderful-water-020621800.1.azurestaticapps.net",
+#     ]
+
+#     @field_validator("CORS_ORIGINS", mode="before")
+#     @classmethod
+#     def assemble_cors_origins(cls, v):
+#         if isinstance(v, str):
+#             return [i.strip() for i in v.split(",")]
+#         return v
+
+#     API_PREFIX: str = "/api"
+
+#     # Database settings
+#     DB_NAME: Optional[str] = None
+#     DB_USER: Optional[str] = None
+#     DB_PASSWORD: Optional[str] = None
+#     DB_HOST: Optional[str] = None
+#     DB_PORT: Optional[int] = None
+#     DB_POOL_SIZE: int = 20
+#     DB_MAX_OVERFLOW: int = 10
+#     DB_POOL_TIMEOUT: int = 30
+#     DB_ECHO: bool = False
+#     DB_SSL_MODE: Optional[str] = None
+
+#     # JWT Settings
+#     SECRET_KEY: str = os.getenv("JWT_SECRET_KEY", "secret-key-for-development")
+#     ALGORITHM: str = "HS256"
+#     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+#     class Config:
+#         env_file = ".env"
+#         case_sensitive = True
+
+
+# @lru_cache()
+# def get_settings() -> Settings:
+#     return Settings()
+
+
+# BASE_DIR = Path(__file__).parent.parent
+
+# # Logging configuration
+# LOGGING_CONFIG = {
+#     "development": {
+#         "log_level": "DEBUG",
+#         "log_dir": BASE_DIR / "logs" / "dev",
+#     },
+#     "production": {
+#         "log_level": "INFO",
+#         "log_dir": BASE_DIR / "logs" / "prod",
+#     },
+#     "testing": {
+#         "log_level": "DEBUG",
+#         "log_dir": None,  # Console only
+#     },
+# }
+
+# ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
+# # Ensure environment is one of the defined keys, default to development if not
+# if ENVIRONMENT not in LOGGING_CONFIG:
+#     ENVIRONMENT = "development"
+# CURRENT_LOGGING_CONFIG = LOGGING_CONFIG[ENVIRONMENT]
+
 import os
+import json
 from pathlib import Path
 from functools import lru_cache
 from typing import Optional, List
+
 from pydantic_settings import BaseSettings
 from pydantic import field_validator
-from dotenv import load_dotenv
-import json
-
-load_dotenv()
 
 
 class Settings(BaseSettings):
+    # ----------------------------------------------------
+    # App Settings
+    # ----------------------------------------------------
     APP_VERSION: str = "1.0.0"
     APP_NAME: str = "FastAPI React Starter"
     APP_DESCRIPTION: str = "FastAPI React Starter Template"
     ENVIRONMENT: str = "development"
-    DATABASE_URL: str = ""
-    TEST_DATABASE_URL: Optional[str] = "sqlite+aiosqlite:///./test_app.db"
-    CORS_ORIGINS: List[str] = [
-        "http://localhost:5173",
-        "http://localhost:3000",
-        "https://wonderful-water-020621800.1.azurestaticapps.net",
-    ]
-
-    # @field_validator("CORS_ORIGINS", mode="before")
-    # @classmethod
-    # def assemble_cors_origins(cls, v):
-    #     if isinstance(v, str):
-    #         return [i.strip() for i in v.split(",")]
-    #     return v
-    # @field_validator("CORS_ORIGINS", mode="before")
-    # def assemble_cors_origins(cls, v):
-    #     if not v:
-    #         return []
-
-    #     if isinstance(v, str):
-    #         if v.startswith("["):
-    #             import json
-
-    #             return json.loads(v)
-    #         return [i.strip() for i in v.split(",")]
-
-    #     return v
-
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def assemble_cors_origins(cls, v):
-        if isinstance(v, str):
-            try:
-                # handle JSON format from Azure
-                return json.loads(v)
-            except Exception:
-                # fallback to comma separated values
-                return [i.strip() for i in v.split(",")]
-        return v
 
     API_PREFIX: str = "/api"
 
-    # Database settings
+    # ----------------------------------------------------
+    # Database
+    # ----------------------------------------------------
+    DATABASE_URL: str = ""
+    TEST_DATABASE_URL: Optional[str] = "sqlite+aiosqlite:///./test_app.db"
+
     DB_NAME: Optional[str] = None
     DB_USER: Optional[str] = None
     DB_PASSWORD: Optional[str] = None
     DB_HOST: Optional[str] = None
     DB_PORT: Optional[int] = None
+
     DB_POOL_SIZE: int = 20
     DB_MAX_OVERFLOW: int = 10
     DB_POOL_TIMEOUT: int = 30
     DB_ECHO: bool = False
     DB_SSL_MODE: Optional[str] = None
 
-    # JWT Settings
-    SECRET_KEY: str = os.getenv("JWT_SIGNING_KEY", "secret-key-for-development")
+    # ----------------------------------------------------
+    # CORS
+    # ----------------------------------------------------
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "https://wonderful-water-020621800.1.azurestaticapps.net",
+    ]
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def assemble_cors_origins(cls, v):
+        """
+        Supports:
+        1️⃣ JSON array (Azure style)
+        2️⃣ comma separated string
+        3️⃣ python list
+        """
+        if isinstance(v, str):
+            v = v.strip()
+
+            # JSON format
+            if v.startswith("["):
+                try:
+                    return json.loads(v)
+                except Exception:
+                    pass
+
+            # comma separated
+            return [i.strip() for i in v.split(",")]
+
+        return v
+
+    # ----------------------------------------------------
+    # JWT
+    # ----------------------------------------------------
+    SECRET_KEY: str = os.getenv("JWT_SIGNING_KEY", "dev-secret-key")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
+    # ----------------------------------------------------
+    # Pydantic Config
+    # ----------------------------------------------------
     class Config:
         env_file = ".env"
         case_sensitive = True
@@ -84,9 +174,15 @@ def get_settings() -> Settings:
     return Settings()
 
 
+# ----------------------------------------------------
+# Paths
+# ----------------------------------------------------
 BASE_DIR = Path(__file__).parent.parent
 
-# Logging configuration
+
+# ----------------------------------------------------
+# Logging Configuration
+# ----------------------------------------------------
 LOGGING_CONFIG = {
     "development": {
         "log_level": "DEBUG",
@@ -98,12 +194,14 @@ LOGGING_CONFIG = {
     },
     "testing": {
         "log_level": "DEBUG",
-        "log_dir": None,  # Console only
+        "log_dir": None,
     },
 }
 
+
 ENVIRONMENT = os.getenv("ENVIRONMENT", "development").lower()
-# Ensure environment is one of the defined keys, default to development if not
+
 if ENVIRONMENT not in LOGGING_CONFIG:
     ENVIRONMENT = "development"
+
 CURRENT_LOGGING_CONFIG = LOGGING_CONFIG[ENVIRONMENT]
