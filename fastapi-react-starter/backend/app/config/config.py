@@ -41,7 +41,7 @@ class Settings(BaseSettings):
     #         return [i.strip() for i in v.split(",")]
 
     #     return v
-    
+
     @field_validator("CORS_ORIGINS", mode="before")
     def assemble_cors_origins(cls, v):
         if not v:
