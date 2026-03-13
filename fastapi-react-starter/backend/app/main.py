@@ -55,5 +55,4 @@ app.include_router(health_router, prefix="/api")
 app.include_router(auth_router, prefix="/api")
 
 
-
 logger.info("Application routes configured")
