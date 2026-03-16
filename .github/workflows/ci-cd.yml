@@ -408,7 +408,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - run: pulumi stack select surajchouhan24-org/production--non-interactive
+      - run: pulumi stack select surajchouhan24-org/production --non-interactive
 
       - run: pip install -r requirements.txt
 
