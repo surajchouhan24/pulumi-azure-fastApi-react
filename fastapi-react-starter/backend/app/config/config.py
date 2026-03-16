@@ -20,6 +20,7 @@ class Settings(BaseSettings):
         "http://localhost:5173",
         "http://localhost:3000",
         "https://wonderful-water-020621800.1.azurestaticapps.net",
+        "https://victorious-rock-08f37f700.6.azurestaticapps.net",
     ]
 
     @field_validator("CORS_ORIGINS", mode="before")

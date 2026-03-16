@@ -464,6 +464,24 @@ class Postgres:
 
         admin_user = "pgadmin"
         database_name = "appdb"
+        
+        stack = pulumi.get_stack()
+        
+        if stack == "production":
+            ha_mode = "ZoneRedundant"
+            sku_name = "Standard_D2s_v3"
+            sku_tier = "GeneralPurpose"
+            network_config = NetworkArgs(
+                delegated_subnet_resource_id=subnet_id,
+                private_dns_zone_arm_resource_id=private_dns_zone_id,
+            )   
+            dependencies = [dns_link]
+        else:
+            ha_mode = "Disabled"
+            sku_name = "Standard_B1ms"
+            sku_tier = "Burstable"
+            network_config = None
+            dependencies = None
 
         # PostgreSQL Flexible Server
         server = azure.dbforpostgresql.Server(
@@ -477,8 +495,8 @@ class Postgres:
             version="15",
 
             sku=SkuArgs(
-                name="Standard_B1ms",
-                tier="Burstable",
+                name=sku_name,
+                tier=sku_tier,
             ),
 
             storage=StorageArgs(
@@ -488,19 +506,26 @@ class Postgres:
             backup=BackupArgs(
                 backup_retention_days=7
             ),
+            
 
             high_availability=HighAvailabilityArgs(
-                mode="Disabled"
+                mode=ha_mode
             ),
 
             # 🔑 Private networking
-            network=NetworkArgs(
-                delegated_subnet_resource_id=subnet_id,
-                private_dns_zone_arm_resource_id=private_dns_zone_id,
-            ),
+            # network=NetworkArgs(
+            #     delegated_subnet_resource_id=subnet_id,
+            #     private_dns_zone_arm_resource_id=private_dns_zone_id,
+            # ),
             
+            # opts=pulumi.ResourceOptions(
+            #     depends_on=[dns_link]   # ⭐ IMPORTANT
+            # ),
+            
+            network=network_config,
+
             opts=pulumi.ResourceOptions(
-                depends_on=[dns_link]   # ⭐ IMPORTANT
+                depends_on=dependencies
             ),
 
             # disable public internet access

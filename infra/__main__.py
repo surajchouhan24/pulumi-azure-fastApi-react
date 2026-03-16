@@ -501,6 +501,7 @@ azure.authorization.RoleAssignment(
 )
 
 # Pulumi Outputs
+pulumi.export("environment", stack)
 pulumi.export("frontendUrl", frontend.url)
 pulumi.export("apiUrl", api.api_url)
 pulumi.export("postgresHost", postgres.host)

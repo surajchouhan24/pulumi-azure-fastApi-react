@@ -2,10 +2,12 @@ config:
   fastapi-react-starter:environment: dev-test
   fastapi-react-starter:location: eastasia
   fastapi-react-starter:dbName: appdb
-  fastapi-react-starter:dbUser: postgres
+  fastapi-react-starter:dbUser: pgadmin
   fastapi-react-starter:jwtKey:
     secure: AAABAG4zbJngcKL7dvCpd0heoDx//2kbO1a7psc8nT0ROp9QBw==
   fastapi-react-starter:dbPassword:
     secure: AAABAO4WwgM/X08R968OLrIYGvPRbDmjs5H1eyx3bbyKJhjESkTxgj1QP625b+clf/E=
   fastapi-react-starter:backendImage: docker.io/surajchauhan24/fastapi-backend:latest
   fastapi-react-starter:backendImageAcr: myappdevtest.azurecr.io/fastapi-backend:latest
+  fastapi-react-starter:dbPort: "5432"
+  fastapi-react-starter:websitePort: "8000"

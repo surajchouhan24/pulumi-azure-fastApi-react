@@ -218,6 +218,8 @@ class KeyVault:
 
         config = pulumi.Config()
         client = azure.authorization.get_client_config()
+        
+        stack = pulumi.get_stack()
 
         # Generate unique suffix
         suffix = random.RandomId(
@@ -225,9 +227,12 @@ class KeyVault:
             byte_length=3
         )
 
-        vault_name = pulumi.Output.concat(
-            name, "-kv-", suffix.hex
-        )
+        if stack == "production":
+            # short and stable name for production
+            vault_name = pulumi.Output.concat(name, "-kv")
+        else:
+            # unique name for dev/test stacks
+            vault_name = pulumi.Output.concat(name, "-kv-", suffix.hex)
 
         # Create Key Vault
         vault = azure.keyvault.Vault(

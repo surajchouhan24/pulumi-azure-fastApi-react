@@ -534,6 +534,20 @@ class ApiService:
 
         # backend_image = config.require("backendImage")
         backend_image = config.require("backendImageAcr")
+        
+        db_name = config.require("dbName")
+        db_user = config.require("dbUser")
+        db_port = config.get("dbPort") or "5432"
+        website_port = config.get("websitePort") or "8000"
+        
+        if stack == "production":
+            # sku_name = "P1v3"
+            # sku_tier = "PremiumV3"
+            sku_name = "B1"
+            sku_tier = "Basic"
+        else:
+             sku_name = "F1"
+             sku_tier = "Free"
 
         # App Service Plan
         plan = azure.web.AppServicePlan(
@@ -544,10 +558,21 @@ class ApiService:
             reserved=True,
 
             sku=azure.web.SkuDescriptionArgs(
-                name="B1",
-                tier="Basic"
+                name=sku_name,
+                tier=sku_tier
             )
         )
+        
+        if stack == "production":
+            cors_origins = [
+                pulumi.Output.concat("https://", frontend_host)
+            ]
+        else:
+            cors_origins = [
+                pulumi.Output.concat("https://", frontend_host),
+                "http://localhost:5173"
+            ]
+        
 
         # Web App
         app = azure.web.WebApp(
@@ -580,9 +605,7 @@ class ApiService:
                 acr_use_managed_identity_creds=True,
 
                 cors=azure.web.CorsSettingsArgs(
-                    allowed_origins=[
-                        pulumi.Output.concat("https://", frontend_host)
-                    ],
+                    allowed_origins=cors_origins,
                     support_credentials=True
                 ),
                 
@@ -603,7 +626,7 @@ class ApiService:
 
                     azure.web.NameValuePairArgs(
                         name="DB_USER",
-                        value="pgadmin"
+                        value=db_user
                     ),
 
                     azure.web.NameValuePairArgs(
@@ -617,12 +640,12 @@ class ApiService:
 
                     azure.web.NameValuePairArgs(
                         name="DB_NAME",
-                        value="appdb"
+                        value=db_name
                     ),
 
                     azure.web.NameValuePairArgs(
                         name="DB_PORT",
-                        value="5432"
+                        value=db_port
                     ),
 
                     # JWT Secret
@@ -643,11 +666,11 @@ class ApiService:
 
                     azure.web.NameValuePairArgs(
                         name="WEBSITES_PORT",
-                        value="8000"
+                        value=website_port
                     ),
                     azure.web.NameValuePairArgs(
                         name="CORS_ORIGINS",
-                        value='["https://wonderful-water-020621800.1.azurestaticapps.net","http://localhost:5173"]'
+                        value='["https://victorious-rock-08f37f700.6.azurestaticapps.net","http://localhost:5173"]'
                     ),
                     azure.web.NameValuePairArgs(
                         name="ENVIRONMENT",
