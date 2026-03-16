@@ -403,6 +403,7 @@
 import pulumi
 import pulumi_azure_native as azure
 
+from components.acr import ContainerRegistry
 from components.network import Network
 from components.keyvault import KeyVault
 from components.postgres import Postgres
@@ -423,6 +424,13 @@ name_prefix = f"{project}-{stack}"
 rg = azure.resources.ResourceGroup(
     f"{name_prefix}-rg",
     location=location
+)
+
+# Container Registry
+acr = ContainerRegistry(
+    name_prefix.replace("-", ""),
+    rg.name,
+    location
 )
 
 # Network
@@ -466,7 +474,8 @@ api = ApiService(
     network.app_subnet_id,
     keyvault.db_password_secret_uri,
     keyvault.jwt_secret_uri,
-    frontend.hostname
+    frontend.hostname,
+    acr.login_server
 )
 
 # Key Vault access for API identity
@@ -480,6 +489,17 @@ azure.authorization.RoleAssignment(
     principal_type="ServicePrincipal",
 )
 
+# ACR Pull role for API identity
+azure.authorization.RoleAssignment(
+    f"{name_prefix}-acr-pull",
+    scope=acr.registry.id,
+
+    role_definition_id="/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d",
+
+    principal_id=api.identity_principal_id,
+    principal_type="ServicePrincipal",
+)
+
 # Pulumi Outputs
 pulumi.export("frontendUrl", frontend.url)
 pulumi.export("apiUrl", api.api_url)
@@ -487,3 +507,4 @@ pulumi.export("postgresHost", postgres.host)
 pulumi.export("resourceGroupName", rg.name)
 pulumi.export("keyVaultUri", keyvault.vault_uri)
 pulumi.export("staticWebAppToken", frontend.deployment_token)
+pulumi.export("acrLoginServer", acr.login_server)

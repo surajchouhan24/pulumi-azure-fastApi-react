@@ -175,7 +175,7 @@ AsyncSessionLocal = async_sessionmaker(
 class Base(DeclarativeBase):
     pass
 
-
+        
 async def get_db() -> AsyncSession:
     """
     Dependency that provides a database session.

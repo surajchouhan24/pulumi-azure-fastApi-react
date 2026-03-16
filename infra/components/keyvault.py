@@ -261,7 +261,7 @@ class KeyVault:
         # Store DB password
         db_secret = azure.keyvault.Secret(
             f"{name}-db-secret",
-            resource_group_name=rg,
+            resource_group_name=rg, 
             vault_name=vault.name,
             properties=azure.keyvault.SecretPropertiesArgs(
                 value=db_password

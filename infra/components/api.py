@@ -526,12 +526,14 @@ class ApiService:
         db_password_secret_uri,
         jwt_secret_uri,
         frontend_host,
+        acr_login_server,
     ):
 
         stack = pulumi.get_stack()
         config = pulumi.Config()
 
-        backend_image = config.require("backendImage")
+        # backend_image = config.require("backendImage")
+        backend_image = config.require("backendImageAcr")
 
         # App Service Plan
         plan = azure.web.AppServicePlan(
@@ -574,6 +576,8 @@ class ApiService:
                 #     allowed_origins=[frontend_host],  # Use full URL including https://
                 #     support_credentials=True
                 # ),
+                
+                acr_use_managed_identity_creds=True,
 
                 cors=azure.web.CorsSettingsArgs(
                     allowed_origins=[
@@ -584,6 +588,12 @@ class ApiService:
                 
 
                 app_settings=[
+                    
+                     # ACR registry URL
+                    azure.web.NameValuePairArgs(
+                        name="DOCKER_REGISTRY_SERVER_URL",
+                        value=pulumi.Output.concat("https://", acr_login_server)
+                    ),
 
                     # Database
                     azure.web.NameValuePairArgs(
