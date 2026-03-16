@@ -350,229 +350,229 @@
 name: CI-CD
 
 on:
-push:
-branches:
-- main
+  push:
+    branches:
+      - main
 
 concurrency:
-group: dev-deploy
-cancel-in-progress: true
+  group: dev-deploy
+  cancel-in-progress: true
 
 env:
-IMAGE_NAME: fastapi-backend
-IMAGE_TAG: ${{ github.sha }}
+  IMAGE_NAME: fastapi-backend
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
 
 # ---------------- Backend Tests ----------------
 
-test-backend:
-runs-on: ubuntu-latest
+  test-backend:
+    runs-on: ubuntu-latest
 
-defaults:
-  run:
-    working-directory: fastapi-react-starter/backend
+    defaults:
+      run:
+        working-directory: fastapi-react-starter/backend
 
-steps:
-  - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  - uses: actions/setup-python@v5
-    with:
-      python-version: "3.12"
-      cache: pip
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
 
-  - run: pip install -r requirements.txt
-  - run: pytest
+      - run: pip install -r requirements.txt
+      - run: pytest
 
-# ---------------- Deploy Base Infrastructure ----------------
+  # ---------------- Deploy Base Infrastructure ----------------
 
-deploy-infra-base:
-needs: test-backend
-runs-on: ubuntu-latest
+  deploy-infra-base:
+    needs: test-backend
+    runs-on: ubuntu-latest
 
-defaults:
-  run:
-    working-directory: infra
+    defaults:   
+      run:
+        working-directory: infra
 
-steps:
-  - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  - uses: azure/login@v2
-    with:
-      creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-  - uses: pulumi/setup-pulumi@v2
+      - uses: pulumi/setup-pulumi@v2
 
-  - name: Pulumi Login
-    run: pulumi login
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Pulumi Login
+        run: pulumi login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-  - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+      - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
 
-  - run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt
 
-  - run: pulumi up --yes --non-interactive
-
-
-# ---------------- Build & Push Docker Image ----------------
-
-build-backend:
-needs: deploy-infra-base
-runs-on: ubuntu-latest
-
-outputs:
-  login_server: ${{ steps.acr.outputs.login_server }}
-
-steps:
-  - uses: actions/checkout@v4
-
-  - uses: azure/login@v2
-    with:
-      creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-  - uses: pulumi/setup-pulumi@v2
-
-  - name: Pulumi Login
-    run: pulumi login
-    working-directory: infra
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
-
-  - name: Select Stack
-    run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
-    working-directory: infra
-
-  - name: Get ACR login server
-    id: acr
-    run: |
-      LOGIN_SERVER=$(pulumi stack output acrLoginServer)
-      echo "login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
-    working-directory: infra
-
-  - name: Login to ACR
-    run: |
-      az acr login --name $(echo ${{ steps.acr.outputs.login_server }} | cut -d'.' -f1)
-
-  - name: Build Docker Image
-    run: |
-      docker build \
-      -t ${{ steps.acr.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG} \
-      fastapi-react-starter/backend
-
-  - name: Push Docker Image
-    run: |
-      docker push \
-      ${{ steps.acr.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG}
+      - run: pulumi up --yes --non-interactive
 
 
-# ---------------- Deploy Backend ----------------
+  # ---------------- Build & Push Docker Image ----------------
 
-deploy-backend:
-needs: build-backend
-runs-on: ubuntu-latest
+  build-backend:
+    needs: deploy-infra-base
+    runs-on: ubuntu-latest
 
-defaults:
-  run:
-    working-directory: infra
+    outputs:
+      login_server: ${{ steps.acr.outputs.login_server }}
 
-steps:
-  - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-  - uses: azure/login@v2
-    with:
-      creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-  - uses: pulumi/setup-pulumi@v2
+      - uses: pulumi/setup-pulumi@v2
 
-  - name: Pulumi Login
-    run: pulumi login
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+      - name: Pulumi Login
+        run: pulumi login
+        working-directory: infra
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-  - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+      - name: Select Stack
+        run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+        working-directory: infra
 
-  - name: Set backend image
-    run: |
-      pulumi config set backendImageAcr \
-      ${{ needs.build-backend.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG}
+      - name: Get ACR login server
+        id: acr
+        run: |
+          LOGIN_SERVER=$(pulumi stack output acrLoginServer)
+          echo "login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
+        working-directory: infra
 
-  - run: pulumi up --yes --non-interactive
+      - name: Login to ACR
+        run: |
+          az acr login --name $(echo ${{ steps.acr.outputs.login_server }} | cut -d'.' -f1)
 
-# ---------------- Build Frontend ----------------
+      - name: Build Docker Image
+        run: |
+          docker build \
+          -t ${{ steps.acr.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG} \
+          fastapi-react-starter/backend
 
-build-frontend:
-needs: deploy-backend
-runs-on: ubuntu-latest
+      - name: Push Docker Image
+        run: |
+          docker push \
+          ${{ steps.acr.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG}
 
-defaults:
-  run:
-    working-directory: fastapi-react-starter/frontend
 
-steps:
-  - uses: actions/checkout@v4
+  # ---------------- Deploy Backend ----------------
 
-  - uses: actions/setup-node@v4
-    with:
-      node-version: "20"
-      cache: npm
-      cache-dependency-path: fastapi-react-starter/frontend/package-lock.json
+  deploy-backend:
+    needs: build-backend
+    runs-on: ubuntu-latest
 
-  - run: npm install
+    defaults:
+      run:
+        working-directory: infra
 
-  - name: Get API URL
-    id: api
-    run: |
-      cd ../../infra
-      pulumi login
-      pulumi stack select surajchouhan24-org/dev-test
-      API_URL=$(pulumi stack output apiUrl)
-      echo "api_url=$API_URL" >> $GITHUB_OUTPUT
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
 
-  - name: Create env file
-    run: |
-      echo "VITE_API_URL=${{ steps.api.outputs.api_url }}" > .env.production
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-  - run: npm run build
+      - uses: pulumi/setup-pulumi@v2
 
-  - uses: actions/upload-artifact@v4
-    with:
-      name: react-build
-      path: fastapi-react-starter/frontend/dist
+      - name: Pulumi Login
+        run: pulumi login
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-# ---------------- Deploy Frontend ----------------
+      - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
 
-deploy-frontend:
-needs: build-frontend
-runs-on: ubuntu-latest
+      - name: Set backend image
+        run: |
+          pulumi config set backendImageAcr \
+          ${{ needs.build-backend.outputs.login_server }}/${IMAGE_NAME}:${IMAGE_TAG}
 
-steps:
-  - uses: actions/checkout@v4
+      - run: pulumi up --yes --non-interactive
 
-  - uses: pulumi/setup-pulumi@v2
+  # ---------------- Build Frontend ----------------
 
-  - name: Get Static Web App Token
-    id: swa
-    run: |
-      cd infra
-      pulumi login
-      pulumi stack select surajchouhan24-org/dev-test
-      TOKEN=$(pulumi stack output staticWebAppToken)
-      echo "token=$TOKEN" >> $GITHUB_OUTPUT
-    env:
-      PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+  build-frontend:
+    needs: deploy-backend
+    runs-on: ubuntu-latest
 
-  - uses: actions/download-artifact@v4
-    with:
-      name: react-build
-      path: fastapi-react-starter/frontend/dist
+    defaults:
+      run:
+        working-directory: fastapi-react-starter/frontend
 
-  - uses: Azure/static-web-apps-deploy@v1
-    with:
-      azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
-      repo_token: ${{ secrets.GITHUB_TOKEN }}
-      action: upload
-      app_location: "fastapi-react-starter/frontend/dist"
-      skip_app_build: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: fastapi-react-starter/frontend/package-lock.json
+
+      - run: npm install
+
+      - name: Get API URL
+        id: api
+        run: |
+          cd ../../infra
+          pulumi login
+          pulumi stack select surajchouhan24-org/dev-test
+          API_URL=$(pulumi stack output apiUrl)
+          echo "api_url=$API_URL" >> $GITHUB_OUTPUT
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - name: Create env file
+        run: |
+          echo "VITE_API_URL=${{ steps.api.outputs.api_url }}" > .env.production
+
+      - run: npm run build
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: react-build
+          path: fastapi-react-starter/frontend/dist
+
+  # ---------------- Deploy Frontend ----------------
+
+  deploy-frontend:
+    needs: build-frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pulumi/setup-pulumi@v2
+
+      - name: Get Static Web App Token
+        id: swa
+        run: |
+          cd infra
+          pulumi login
+          pulumi stack select surajchouhan24-org/dev-test
+          TOKEN=$(pulumi stack output staticWebAppToken)
+          echo "token=$TOKEN" >> $GITHUB_OUTPUT
+        env:
+          PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: react-build
+          path: fastapi-react-starter/frontend/dist
+
+      - uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ steps.swa.outputs.token }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: "fastapi-react-starter/frontend/dist"
+          skip_app_build: true
