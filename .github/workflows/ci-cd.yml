@@ -408,7 +408,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+      - run: pulumi stack select surajchouhan24-org/production--non-interactive
 
       - run: pip install -r requirements.txt
 
@@ -440,7 +440,7 @@ jobs:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
       - name: Select Stack
-        run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+        run: pulumi stack select surajchouhan24-org/production --non-interactive
         working-directory: infra
 
       - name: Get ACR login server
@@ -490,7 +490,7 @@ jobs:
         env:
           PULUMI_ACCESS_TOKEN: ${{ secrets.PULUMI_ACCESS_TOKEN }}
 
-      - run: pulumi stack select surajchouhan24-org/dev-test --non-interactive
+      - run: pulumi stack select surajchouhan24-org/production --non-interactive
 
       - name: Set backend image
         run: |
@@ -525,7 +525,7 @@ jobs:
         run: |
           cd ../../infra
           pulumi login
-          pulumi stack select surajchouhan24-org/dev-test
+          pulumi stack select surajchouhan24-org/production
           API_URL=$(pulumi stack output apiUrl)
           echo "api_url=$API_URL" >> $GITHUB_OUTPUT
         env:
@@ -558,7 +558,7 @@ jobs:
         run: |
           cd infra
           pulumi login
-          pulumi stack select surajchouhan24-org/dev-test
+          pulumi stack select surajchouhan24-org/production
           TOKEN=$(pulumi stack output staticWebAppToken)
           echo "token=$TOKEN" >> $GITHUB_OUTPUT
         env:
